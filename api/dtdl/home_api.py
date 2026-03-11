@@ -1,15 +1,15 @@
 import datetime
 from typing import List, Dict, Any
 
-from .base_api_client import BaseApiClient
-from .models.api_query import APIQuery
+from models.api_query import APIQuery
 
 
-class HomeApiClient(BaseApiClient):
+class HomeApiClient:
 
-    def __init__(self, config_manager, natco):
+    def __init__(self, data_interface):
 
-        super().__init__(config_manager, natco)
+        self.data_interface = data_interface
+        self.language = data_interface.language
 
         self._page_content = None
         self._rail_titles = None
@@ -22,37 +22,26 @@ class HomeApiClient(BaseApiClient):
         self._rail_titles = None
         self._now_on_tv_info = None
 
-        base_url = self.config_manager.get_endpoint(self.language, "BASE")
-        page_url = self.config_manager.get_endpoint(self.language, "PAGE_URL")
-
         if not content_type:
             content_type = "home"
 
         if not page_id:
 
-            page_ids = self.config_manager.get_param(
-                self.language,
-                "PAGE_IDS"
-            )
+            page_ids = self.data_interface.get_params("PAGE_IDS")
 
             if page_ids and content_type in page_ids:
                 page_id = page_ids[content_type]
 
-        url = f"{base_url}{page_url}".replace("{page_id}", page_id)
+        params = self.data_interface.get_params("PAGE_CONTENT_PARAM")
 
-        headers = self.config_manager.get_header(self.language, "BFF_OTHER")
-
-        params = self.config_manager.get_param(
-            self.language,
-            "PAGE_CONTENT_PARAM"
-        )
-
-        self._page_content = self.make_request(
-            "GET",
-            url,
-            headers=headers,
+        response = self.data_interface.request(
+            method="GET",
+            endpoint="PAGE_URL",
             params=params,
+            headers_type="BFF_OTHER",
         )
+
+        self._page_content = response
 
         return self._page_content
 
