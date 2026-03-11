@@ -23,7 +23,7 @@ class EpgApiClient:
         # Injected later by interface layer if needed
         self.api_library = None
 
-    def _initialize_station_channel_map(self) -> List[APIQuery.Channel]:
+    def _initialize_station_channel_map(self) -> List["APIQuery.Channel"]:
 
         channel_client = self.api_library.channel_api
 
