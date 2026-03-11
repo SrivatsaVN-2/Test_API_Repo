@@ -1,7 +1,6 @@
 import datetime
 from typing import List, Dict, Any
 
-from models.api_query import APIQuery
 
 
 class HomeApiClient:
@@ -9,6 +8,7 @@ class HomeApiClient:
     def __init__(self, data_interface):
 
         self.data_interface = data_interface
+        self.APIQuery = data_interface.APIQuery
         self.language = data_interface.language
 
         self._page_content = None
