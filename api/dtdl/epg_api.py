@@ -4,7 +4,7 @@ from typing import Any, List, Optional
 
 import pytz
 
-from models.api_query import APIQuery
+
 
 
 class EpgApiClient:
@@ -16,7 +16,7 @@ class EpgApiClient:
 
         self.data_interface = data_interface
         self.language = data_interface.language
-
+        self.APIQuery = data_interface.APIQuery
         self.station_to_channel_map = {}
         self.channels = []
 
