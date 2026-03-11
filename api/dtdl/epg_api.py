@@ -4,30 +4,24 @@ from typing import Any, List, Optional
 
 import pytz
 
-from .base_api_client import BaseApiClient
-from .models.api_query import APIQuery
+from models.api_query import APIQuery
 
 
-def get_device_timezone(default_timezone="Europe/Lisbon"):
-    """
-    Device timezone will be injected through BaseApiClient config
-    """
-    return default_timezone
+class EpgApiClient:
 
+    def __init__(self, data_interface):
+        """
+        API client receives DataInterface from STBT repo.
+        """
 
-class EpgApiClient(BaseApiClient):
-
-    def __init__(self, config_manager, natco: str):
-
-        super().__init__(config_manager, natco)
+        self.data_interface = data_interface
+        self.language = data_interface.language
 
         self.station_to_channel_map = {}
         self.channels = []
 
-        # This will be injected by STBT interface layer
+        # Injected later by interface layer if needed
         self.api_library = None
-
-        self._initialize_station_channel_map()
 
     def _initialize_station_channel_map(self) -> List[APIQuery.Channel]:
 
@@ -42,14 +36,8 @@ class EpgApiClient(BaseApiClient):
 
         for channel in channels:
 
-            if (
-                channel.station_id is not None
-                and channel.channel_number is not None
-            ):
-                self.station_to_channel_map[channel.station_id] = (
-                    channel.channel_number
-                )
-
+            if channel.station_id and channel.channel_number:
+                self.station_to_channel_map[channel.station_id] = channel.channel_number
                 self.channels.append(channel)
 
         return self.channels
@@ -78,15 +66,7 @@ class EpgApiClient(BaseApiClient):
         if date is None:
             date = datetime.datetime.now().strftime("%Y-%m-%d")
 
-        base_url = self.config_manager.get_endpoint(self.language, "BASE")
-        endpoint = self.config_manager.get_endpoint(self.language, "EPG_SCHEDULE")
-
-        url = f"{base_url}{endpoint}"
-
-        params = self.config_manager.get_param(
-            self.language,
-            "EPG_SCHEDULE_PARAM"
-        ).copy()
+        params = self.data_interface.get_params("EPG_SCHEDULE_PARAM")
 
         params["date"] = date
         params["hour_offset"] = hour_offset
@@ -97,23 +77,12 @@ class EpgApiClient(BaseApiClient):
         if channel_numbers:
             params["channel_numbers"] = ",".join(map(str, channel_numbers))
 
-        headers = self.config_manager.get_header(self.language, "BFF_OTHER")
-
-        if self.access_token:
-
-            headers.update(
-                {
-                    "bff_token": self.access_token,
-                    "Authorization": f"Bearer {self.access_token}",
-                }
-            )
-
-        response_data = self.make_request(
-            "GET",
-            url,
-            headers=headers,
+        response_data = self.data_interface.request(
+            method="GET",
+            endpoint="EPG_SCHEDULE",
             params=params,
-            requires_adult_token=is_adult,
+            headers_type="BFF_OTHER",
+            requires_auth=True,
         )
 
         if not self.station_to_channel_map:
