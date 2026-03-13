@@ -506,7 +506,7 @@ def test_epg_apis() -> List[APIQuery.Program]:
     log.info("-----------EPG API Results------------------")
 
     # Original tests
-    all_programs = epg_api_client.get_programs(
+    all_programs = epg_api.get_programs(
         APIQuery.ProgramDesc(is_adult=False, is_subscribed=True, is_audio=False),
         current_time_only=True,
     )
