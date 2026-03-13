@@ -23,7 +23,7 @@ from tests.androidtv.pages.utility.system_logger import Logger
 from tests.androidtv.pages.utility.utils import Utils
 """
 log = Logger().setup_logger("EPG.API")
-interface = Interface()
+
 
 def get_device_timezone():
     """
