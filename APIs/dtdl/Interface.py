@@ -12,9 +12,9 @@ class Interface:
   @property
   def channel_api(self):
     if self._channel_api_client is None:
-       from APIs.dtdl.channel_api import ChannelApiClient
+      from APIs.dtdl.channel_api import ChannelApiClient
 
-       self._channel_api_client = ChannelApiClient(config_manager, self.natco_config)
+      self._channel_api_client = ChannelApiClient(config_manager, self.natco_config)
      return self._channel_api_client
   
   @property
