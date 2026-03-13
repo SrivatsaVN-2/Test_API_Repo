@@ -58,6 +58,7 @@ class EpgApiClient(BaseApiClient):
             self.channels = []
             self.interface = Interface()
             self.language = interface.language
+            self.device_and_user_details = interface.device_and_user_details
             self._initialize_station_channel_map()
         except Exception as e:
             log.error("Error initializing EpgApiClient: %s", str(e))
@@ -500,8 +501,8 @@ def test_epg_apis() -> List[APIQuery.Program]:
     """
     Test basic EPG API functionality and return a list of Program objects.
     """
-    Utils().collect_and_validate_device_info()
-    epg_api_client = ApiLibrary().epg_api
+    
+    epg_api_client = interface.epg_api
     log.info("-----------EPG API Results------------------")
 
     # Original tests
