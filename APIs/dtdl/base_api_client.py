@@ -14,29 +14,38 @@ from tests.androidtv.pages.utility.utils import Utils #get device details and us
 """
 
 class BaseApiClient:
-    def __init__(self, config_manager=None, language=None):
+    def __init__(self, config_manager):
         # print("Calling Base Api Client")
         if config_manager:
             self.config_manager = config_manager
         else:
-            config_path = stbt.find_file("config.json") #can be eliminated by passing config manager object directly to the constructor
+            config_path = APIs/dtdl/ "config.json"
             self.config_manager = ConfigManager(config_path)
-        if language:
-            self.language = language
-        else:
-            self.language = get_natco_config()["language"]
+            
+        self.language = None
+        self.natco_config = None
+        self.major_version = None
+        self.user_and_device_data = None
+        self.STBConfig = None
             # self.language = stbt.get_config("device_under_test", "channel_lang")
         self.session = requests.Session()
         self.access_token = None
         self.adult_token = None
+        
+        self.interface = Interface()
+        self.language = Interface.languae
+        self.natco_config = Interface.natco_config
+        self.major_version = Interface.major_version
+        self.user_and_device_data = Interface.user_and_device_data
+        self.STBConfig = Interface.STBConfig
 
     def _get_adult_token_from_stb_data(self):
         """
         Fetch the x-adult-token from stb_data.json based on the device ID
         """
         try:
-            device_id = STBConfig.adb_device_id
-            device_details = Utils().get_device_and_user_info(device_id)
+            #device_id = STBConfig.adb_device_id
+            #device_details = Utils().get_device_and_user_info(device_id)
             if isinstance(device_details, tuple) and len(device_details) >= 5:
                 user_info = device_details[4]
                 return user_info.get("x-adult-token", "")
