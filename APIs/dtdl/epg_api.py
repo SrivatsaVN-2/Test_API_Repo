@@ -501,7 +501,7 @@ def test_epg_apis() -> List[APIQuery.Program]:
     """
     Test basic EPG API functionality and return a list of Program objects.
     """
-    
+    interface = Interface()
     epg_api_client = interface.epg_api
     log.info("-----------EPG API Results------------------")
 
