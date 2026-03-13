@@ -30,7 +30,7 @@ LANGUAGE_MAPPING = {
 }
 
 
-class ConfigManager:
+class Config_Manager:
     def __init__(self, config_file):
         self.interface = Interface()
         self.language = Interface.language
