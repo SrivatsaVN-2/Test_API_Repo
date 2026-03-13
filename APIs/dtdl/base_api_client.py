@@ -32,7 +32,7 @@ class BaseApiClient:
         self.access_token = None
         self.adult_token = None
         
-        self.interface = Interface()
+    
         self.language = Interface.languae
         self.natco_config = Interface.natco_config
         self.major_version = Interface.major_version
