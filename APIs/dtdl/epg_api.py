@@ -56,7 +56,7 @@ class EpgApiClient(BaseApiClient):
             super().__init__(config_manager, natco)
             self.station_to_channel_map = {}
             self.channels = []
-           
+
             self.language = interface.language
             self.device_and_user_details = interface.device_and_user_details
             self._initialize_station_channel_map()
@@ -502,7 +502,7 @@ def test_epg_apis() -> List[APIQuery.Program]:
     Test basic EPG API functionality and return a list of Program objects.
     """
    
-    epg_api_client = interface.epg_api
+    epg_api_client = BaseApiClient.interface.epg_api
     log.info("-----------EPG API Results------------------")
 
     # Original tests
