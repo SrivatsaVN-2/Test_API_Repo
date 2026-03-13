@@ -1,0 +1,790 @@
+{
+  "endpoints": {
+    "PL": {
+      "BASE": "https://tv-pl-prod.yo-digital.com/pl-bifrost",
+      "LOGIN": "https://gateway-pl-proxy.tv.yo-digital.com/pl-idm/P/onboarding/login",
+      "CHANNEL_INFO": "/epg/channel?",
+      "SUBSCRIPTION_URL": "/epg/channel/subscriptions?",
+      "ROOT_CATEGORY": "/home/root/categories",
+      "PAGE_URL": "/home/page/{page_id}",
+      "SEARCH_URL": "/search/items?",
+      "COMPONENT_URL": "/home/component/{component_id}/assets?",
+      "ASSET_DETAIL_URL": "/details/program/{asset_id}",
+      "ASSET_ACTION_URL": "/details/program/{asset_id}/actions/v2",
+      "FAVORITE_CHANNELS": "/epg/channel/favourite?",
+      "MY_WATCHLIST": "/watchlist/v2/items?",
+      "RENTAL": "/transaction/me/rent?",
+      "LIVE_TV_INFO": "/player/playinfo/channel?",
+      "EPG_SCHEDULE": "/epg/channel/schedules?"
+    },
+    "HR": {
+      "BASE": "https://tv-hr-prod.yo-digital.com/hr-bifrost",
+      "LOGIN": "https://gateway-hr-proxy.tv.yo-digital.com/hr-idm/P/onboarding/login",
+      "CHANNEL_INFO": "/epg/channel?",
+      "SUBSCRIPTION_URL": "/epg/channel/subscriptions?",
+      "ROOT_CATEGORY": "/home/root/categories",
+      "PAGE_URL": "/home/page/{page_id}",
+      "SEARCH_URL": "/search/items?",
+      "COMPONENT_URL": "/home/component/{component_id}/assets?",
+      "ASSET_DETAIL_URL": "/details/program/{asset_id}",
+      "ASSET_ACTION_URL": "/details/program/{asset_id}/actions/v2?",
+      "FAVORITE_CHANNELS": "/epg/channel/favourite?",
+      "MY_WATCHLIST": "/watchlist/v2/items?",
+      "ADULT_WATCHLIST": "/watchlist/v3/items?",
+      "RENTAL_ADULT": "/transaction/me/all",
+      "RENTAL": "/transaction/me/rent?",
+      "LIVE_TV_INFO": "/player/playinfo/channel?",
+      "EPG_SCHEDULE": "/epg/channel/schedules?"
+    },
+    "ME": {
+      "BASE": "https://tv-me-prod.yo-digital.com/me-bifrost",
+      "LOGIN": "https://gateway-me-proxy.tv.yo-digital.com/me-idm/P/onboarding/login",
+      "CHANNEL_INFO": "/epg/channel?",
+      "SUBSCRIPTION_URL": "/epg/channel/subscriptions?",
+      "SEARCH_URL": "/search/items?",
+      "ROOT_CATEGORY": "/home/root/categories?",
+      "PAGE_URL": "/home/page/{page_id}",
+      "COMPONENT_URL": "/home/component/{component_id}/assets?",
+      "ASSET_DETAIL_URL": "/details/program/{asset_id}",
+      "ASSET_ACTION_URL": "/details/program/{asset_id}/actions/v2?",
+      "FAVORITE_CHANNELS": "/epg/channel/favourite?",
+      "ADULT_WATCHLIST": "/watchlist/v3/items?",
+      "RENTAL_ADULT": "/transaction/me/all",
+      "MY_WATCHLIST": "/watchlist/v2/items?",
+      "RENTAL": "/transaction/me/rent?",
+      "LIVE_TV_INFO": "/player/playinfo/channel?",
+      "EPG_SCHEDULE": "/epg/channel/schedules?"
+    },
+    "AT": {
+      "BASE": "https://tv-at-prod.yo-digital.com/at-bifrost",
+      "LOGIN": "https://gateway-at-proxy.tv.yo-digital.com/at-idm/P/onboarding/login",
+      "CHANNEL_INFO": "/epg/channel?",
+      "SUBSCRIPTION_URL": "/epg/channel/subscriptions?",
+      "SEARCH_URL": "/search/items?",
+      "ROOT_CATEGORY": "/home/root/categories",
+      "PAGE_URL": "/home/page/{page_id}",
+      "COMPONENT_URL": "/home/component/{component_id}/assets?",
+      "ASSET_DETAIL_URL": "/details/program/{asset_id}",
+      "ASSET_ACTION_URL": "/details/program/{asset_id}/actions/v2?",
+      "FAVORITE_CHANNELS": "/epg/channel/favourite?",
+      "MY_WATCHLIST": "/watchlist/v2/items?",
+      "RENTAL_ADULT": "/transaction/me/all",
+      "ADULT_WATCHLIST": "/watchlist/v3/items?",
+      "RENTAL": "/transaction/me/rent?",
+      "LIVE_TV_INFO": "/player/playinfo/channel?",
+      "EPG_SCHEDULE": "/epg/channel/schedules?",
+      "CREW_URL": "/details/program/{asset_id}?",
+      "RECORDINGS_URL": "/recordings/me/v3?",
+      "CAST_DETAIL_URL": "/search/person/{person_id}/items?",
+      "BOOKMARK": "/details/bookmarks/v3?",
+      "CHANNEL_ORDER": "/epg/channel/order?"
+    },
+    "MKT": {
+      "BASE": "https://tv-mk-prod.yo-digital.com/mk-bifrost",
+      "CHANNEL_INFO": "/epg/channel?",
+      "SUBSCRIPTION_URL": "/epg/channel/subscriptions?",
+      "ROOT_CATEGORY": "/home/root/categories",
+      "SEARCH_URL": "/search/items?",
+      "PAGE_URL": "/home/page/{page_id}",
+      "COMPONENT_URL": "/home/component/{component_id}/assets?",
+      "ASSET_DETAIL_URL": "/details/program/{asset_id}",
+      "ASSET_ACTION_URL": "/details/program/{asset_id}/actions/v2?",
+      "FAVORITE_CHANNELS": "/epg/channel/favourite?",
+      "MY_WATCHLIST": "/watchlist/v2/items?",
+      "ADULT_WATCHLIST": "/watchlist/v3/items?",
+      "RENTAL_ADULT": "/transaction/me/all",
+      "RENTAL": "/transaction/me/rent?",
+      "LIVE_TV_INFO": "/player/playinfo/channel?",
+      "EPG_SCHEDULE": "/epg/channel/schedules?"
+    },
+    "HU": {
+      "BASE": "https://tv-hu-prod.yo-digital.com/bifrost",
+      "CHANNEL_INFO": "/epg/channel?",
+      "SUBSCRIPTION_URL": "/epg/channel/subscriptions?",
+      "SEARCH_URL": "/search/items?",
+      "ROOT_CATEGORY": "/home/root/categories",
+      "PAGE_URL": "/home/page/{page_id}",
+      "COMPONENT_URL": "/home/component/{component_id}/assets?",
+      "ASSET_DETAIL_URL": "/details/program/{asset_id}",
+      "ASSET_ACTION_URL": "/details/program/{asset_id}/actions/v2?",
+      "FAVORITE_CHANNELS": "/epg/channel/favourite?",
+      "MY_WATCHLIST": "/watchlist/v2/items?",
+      "ADULT_WATCHLIST": "/watchlist/v3/items?",
+      "RENTAL_ADULT": "/transaction/me/all",
+      "RENTAL": "/transaction/me/rent?",
+      "LIVE_TV_INFO": "/player/playinfo/channel?",
+      "EPG_SCHEDULE": "/epg/channel/schedules?"
+    }
+  },
+  "headers": {
+    "AT": {
+      "LOGIN": {
+        "authority": "gateway-at-proxy.tv.yo-digital.com",
+        "app_key": "CTnKA63ruKM0JM1doxAXwwyQLLmQiEiy",
+        "app_version": "latest",
+        "content-type": "application/json;charset=UTF-8",
+        "device-id": "6e7b7d55-5f49-49e3-9646-61f31e8e0a1f",
+        "device-name": "Mac OS - Chrome",
+        "origin": "https://tv.magenta.at",
+        "requestid": "497b5d6b-6754-4f8b-a421-54042b085d0a",
+        "tenant": "tv",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+        "x-request-session-id": "30518772-5310-42a6-a0a3-62a9bc290225",
+        "x-request-tracking-id": "fce42ba2-d340-4eb9-8094-93a1acdff833",
+        "x-tv-flow": "USERNAME_PASSWORD_LOGIN",
+        "x-tv-step": "GET_ACCESS_TOKEN",
+        "x-user-agent": "web|web|Chrome-143|02.0.1380|1"
+      },
+      "OTHER": {
+        "Authorization": "",
+        "authority": "tv-at-prod.yo-digital.com",
+        "x-user-agent": "web|web|Chrome-143|02.0.1380|1",
+        "app_key": "CTnKA63ruKM0JM1doxAXwwyQLLmQiEiy",
+        "tenant": "tv",
+        "x-request-tracking-id": "97d0cb5e-89d0-4cb0-9164-565a02ba3a9e",
+        "device-id": "f093a10e-51da-41e5-b5d9-fdedc9d7a0ae",
+        "app_version": "02.0.1380",
+        "origin": "https://tv.magenta.at",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+      },
+      "BFF_OTHER": {
+        "bff_token": "",
+        "authority": "tv-at-prod.yo-digital.com",
+        "x-user-agent": "web|web|Chrome-143|02.0.1380|1",
+        "app_key": "CTnKA63ruKM0JM1doxAXwwyQLLmQiEiy",
+        "tenant": "tv",
+        "x-request-tracking-id": "a3affab2-9ff0-4dc7-a12c-e1468d18188c",
+        "device-id": "f093a10e-51da-41e5-b5d9-fdedc9d7a0ae",
+        "app_version": "02.0.1380",
+        "origin": "https://tv.magenta.at",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+      },
+      "CREW_HEADERS": {
+        "bff_token": "",
+        "authority": "tv-at-prod.yo-digital.com",
+        "x-user-agent": "web|web|Chrome-124|02.0.891|1",
+        "app_key": "CTnKA63ruKM0JM1doxAXwwyQLLmQiEiy",
+        "tenant": "tv",
+        "x-request-tracking-id": "a3affab2-9ff0-4dc7-a12c-e1468d18188c",
+        "device-id": "f093a10e-51da-41e5-b5d9-fdedc9d7a0ae",
+        "app_version": "02.0.1380",
+        "origin": "https://tv.magenta.at",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+      }
+    },
+    "PL": {
+      "LOGIN": {
+        "authority": "gateway-pl-proxy.tv.yo-digital.com",
+        "app_key": "2zjAjpJ6dRfHR1nIwF47jz75g7Qf4F6z",
+        "app_version": "02.0.1420",
+        "content-type": "application/json;charset=UTF-8",
+        "device-id": "a950931a-c188-4e27-a7b5-6d0322486f28",
+        "device-name": "Mac OS - Chrome",
+        "origin": "https://magentatv.pl",
+        "requestid": "311f636d-4ac3-4253-bdf6-2130bf6e91ba",
+        "tenant": "tv",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+        "x-request-session-id": "b0c676df-a7d9-4d8e-8c6c-0b2f967910f8",
+        "x-request-tracking-id": "83781a1e-40a6-45ce-b1ad-c375e2361e7a",
+        "x-tv-flow": "USERNAME_PASSWORD_LOGIN",
+        "x-tv-step": "GET_ACCESS_TOKEN",
+        "x-user-agent": "web|web|Chrome-145|02.0.1420|1"
+      },
+      "OTHER": {
+        "Authorization": "",
+        "authority": "gateway-pl-proxy.tv.yo-digital.com",
+        "x-user-agent": "web|web|Chrome-145|02.0.1420|1",
+        "app_key": "2zjAjpJ6dRfHR1nIwF47jz75g7Qf4F6z",
+        "tenant": "tv",
+        "x-request-tracking-id": "83781a1e-40a6-45ce-b1ad-c375e2361e7a",
+        "device-id": "a950931a-c188-4e27-a7b5-6d0322486f28",
+        "x-request-session-id": "b0c676df-a7d9-4d8e-8c6c-0b2f967910f8",
+        "app_version": "02.0.1420",
+        "origin": "https://magentatv.pl",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
+      },
+      "BFF_OTHER": {
+        "bff_token": "",
+        "authority": "gateway-pl-proxy.tv.yo-digital.com",
+        "x-user-agent": "web|web|Chrome-145|02.0.1420|1",
+        "app_key": "2zjAjpJ6dRfHR1nIwF47jz75g7Qf4F6z",
+        "tenant": "tv",
+        "x-request-tracking-id": "83781a1e-40a6-45ce-b1ad-c375e2361e7a",
+        "device-id": "a950931a-c188-4e27-a7b5-6d0322486f28",
+        "app_version": "02.0.1420",
+        "origin": "https://magentatv.pl",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
+      }
+    },
+    "HR": {
+      "LOGIN": {
+        "authority": "tv-hr-prod.yo-digital.com",
+        "app_key": "GWaBW4RTloLwpUgYVzOiW5zUxFLmoMj5",
+        "device-id": "53a442b7-7a89-4fcb-97f6-cdebf93a68e7",
+        "origin": "https://tvweb-hr-beta-cdn.tv.yo-digital.com",
+        "requestid": "b50b9fde-4d93-4802-9afa-a94743532587",
+        "x-user-agent": "web|web|Edge-118|02.0.830|1",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+      },
+      "OTHER": {
+        "Authorization": "",
+        "authority": "tv-hr-prod.yo-digital.com",
+        "x-user-agent": "web|web|Chrome-117|02.0.830|1",
+        "app_key": "GWaBW4RTloLwpUgYVzOiW5zUxFLmoMj5",
+        "tenant": "tv",
+        "x-request-tracking-id": "6b16dc70-3a29-4dda-9e63-7f16b6c7b8c8",
+        "device-id": "53a442b7-7a89-4fcb-97f6-cdebf93a68e7",
+        "x-request-session-id": "54ac23a8-c34c-4dd0-b8e1-17774a043b37",
+        "app_version": "02.0.830",
+        "origin": "https://tvweb-hr-beta-cdn.tv.yo-digital.com",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+      },
+      "BFF_OTHER": {
+        "bff_token": "",
+        "authority": "tv-hr-prod.yo-digital.com",
+        "x-user-agent": "web|web|Chrome-117|02.0.830|1",
+        "app_key": "GWaBW4RTloLwpUgYVzOiW5zUxFLmoMj5",
+        "tenant": "tv",
+        "x-request-tracking-id": "6b16dc70-3a29-4dda-9e63-7f16b6c7b8c8",
+        "device-id": "53a442b7-7a89-4fcb-97f6-cdebf93a68e7",
+        "app_version": "02.0.830",
+        "origin": "https://tvweb-hr-beta-cdn.tv.yo-digital.com",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+      }
+    },
+    "ME": {
+      "LOGIN": {
+        "authority": "gateway-me-proxy.tv.yo-digital.com",
+        "app_key": "erYJuNj5fnVXtRgjkr4scxbr3oEkM4I4",
+        "device-id": "0ed1a959-2bbf-402a-a88b-ee360e607d36",
+        "origin": "https://tvweb-me-cdn.tv.yo-digital.com",
+        "requestid": "d6545043-2886-4bc0-bb72-ddc43ca84a7a",
+        "x-user-agent": "web|web|Chrome-118|02.0.810|1",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+      },
+      "OTHER": {
+        "Authorization": "",
+        "authority": "tv-me-prod.yo-digital.com",
+        "x-user-agent": "web|web|Chrome-117|02.0.830|1",
+        "app_key": "erYJuNj5fnVXtRgjkr4scxbr3oEkM4I4",
+        "tenant": "tv",
+        "x-request-tracking-id": "ebdc8525-9f24-4e0f-bd5a-114278c5f8f1",
+        "device-id": "0a8d3b8b-b1e5-44b0-ba20-faa5a4e6fdc3",
+        "x-request-session-id": "6fb05738-9566-4f10-9259-4aa1ddf0440a",
+        "app_version": "02.0.810",
+        "origin": "https://tvweb-me-cdn.tv.yo-digital.com",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+      },
+      "BFF_OTHER": {
+        "bff_token": "",
+        "authority": "tv-me-prod.yo-digital.com",
+        "x-user-agent": "web|web|Chrome-117|02.0.830|1",
+        "app_key": "erYJuNj5fnVXtRgjkr4scxbr3oEkM4I4",
+        "tenant": "tv",
+        "x-request-tracking-id": "ebdc8525-9f24-4e0f-bd5a-114278c5f8f1",
+        "device-id": "0a8d3b8b-b1e5-44b0-ba20-faa5a4e6fdc3",
+        "app_version": "02.0.810",
+        "origin": "https://tvweb-me-cdn.tv.yo-digital.com",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+      }
+    },
+    "MKT": {
+      "OTHER": {
+        "Authorization": "",
+        "authority": "tv-mk-prod.yo-digital.com",
+        "x-user-agent": "web|web|Chrome-131|02.0.830|1",
+        "app_key": "webq1ptdD5Gy4IatUZRiTezSu6sNc57A",
+        "tenant": "tv",
+        "x-request-tracking-id": "31be4ad3-3719-47c6-8cd3-2efb64fefac6",
+        "device-id": "97dd3055-5851-4aa2-9ace-4df90ec81c5e",
+        "x-request-session-id": "67eae382-5877-415d-8af8-701a038b2824",
+        "app_version": "02.0.830",
+        "origin": "https://tvweb-mk-cdn.tv.yo-digital.com",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+      },
+      "BFF_OTHER": {
+        "bff_token": "",
+        "authority": "tv-mk-prod.yo-digital.com",
+        "x-user-agent": "web|web|Chrome-131|02.0.830|1",
+        "app_key": "webq1ptdD5Gy4IatUZRiTezSu6sNc57A",
+        "tenant": "tv",
+        "x-request-tracking-id": "31be4ad3-3719-47c6-8cd3-2efb64fefac6",
+        "device-id": "97dd3055-5851-4aa2-9ace-4df90ec81c5e",
+        "x-request-session-id": "67eae382-5877-415d-8af8-701a038b2824",
+        "app_version": "02.0.830",
+        "origin": "https://tvweb-mk-cdn.tv.yo-digital.com",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+      }
+    },
+    "HU": {
+      "OTHER": {
+        "Authorization": "",
+        "authority": "tv-hu-prod.yo-digital.com",
+        "x-user-agent": "web|web|Chrome-131|02.0.1091|1",
+        "app_key": "exSJHBiSAN6wAAeqdWLdTUfdTi2PNark",
+        "tenant": "tv",
+        "x-request-tracking-id": "0c3a2eff-29fd-47e3-b70d-820eabce4d43",
+        "device-id": "4f5d4435-9a72-4916-bf44-653bf1446970",
+        "x-request-session-id": "cf042b32-1304-4779-b080-d407883cd711",
+        "app_version": "02.0.1091",
+        "origin": "https://tvweb-ui.preprod.tv.yo-digital.com",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36"
+      },
+      "BFF_OTHER": {
+        "authority": "tv-hu-prod.yo-digital.com",
+        "x-user-agent": "web|web|Chrome-131|02.0.1091|1",
+        "app_key": "exSJHBiSAN6wAAeqdWLdTUfdTi2PNark",
+        "tenant": "tv",
+        "x-request-tracking-id": "0c3a2eff-29fd-47e3-b70d-820eabce4d43",
+        "device-id": "4f5d4435-9a72-4916-bf44-653bf1446970",
+        "x-request-session-id": "cf042b32-1304-4779-b080-d407883cd711",
+        "app_version": "02.0.1091",
+        "origin": "https://tvweb-ui.preprod.tv.yo-digital.com",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36"
+      }
+    }
+  },
+  "data": {
+    "AT": {
+      "LOGIN": {
+        "appVersion": "02.0.1380",
+        "channel": {
+          "id": "Tv"
+        },
+        "natco": "at",
+        "type": "telekom",
+        "forceRegister": "false",
+        "context": "login",
+        "device": {
+          "id": "f093a10e-51da-41e5-b5d9-fdedc9d7a0ae",
+          "model": "WEB",
+          "os": "Windows",
+          "deviceName": "WEB",
+          "manageDevice": "false",
+          "deviceType": "WEB",
+          "deviceOS": "Windows",
+          "deviceModel": "web|web|Chrome-143|02.0.1380|1",
+          "deviceManufacturer": "Windows 10",
+          "concurrencyLimitParam": "TVSOA-restriction-unmanagedDeviceStreamLimit",
+          "broadcastingStreamLimitationApplies": "false"
+        },
+        "telekomLogin": {
+          "username": "",
+          "password": ""
+        }
+      }
+    },
+    "PL": {
+      "LOGIN": {
+        "appVersion": "02.0.1420",
+        "channel": {
+          "id": "Tv"
+        },
+        "natco": "pl",
+        "type": "telekom",
+        "forceRegister": "false",
+        "context": "login",
+        "device": {
+          "id": "a950931a-c188-4e27-a7b5-6d0322486f28",
+          "model": "WEB",
+          "os": "Windows",
+          "deviceName": "WEB",
+          "manageDevice": "false",
+          "deviceType": "WEB",
+          "deviceOS": "Windows",
+          "deviceModel": "web|web|Chrome-145|02.0.1420|1",
+          "deviceManufacturer": "Windows 10",
+          "concurrencyLimitParam": "TVSOA-restriction-unmanagedDeviceStreamLimit",
+          "broadcastingStreamLimitationApplies": "false"
+        },
+        "telekomLogin": {
+          "username": "",
+          "password": ""
+        }
+      }
+    },
+    "HR": {
+      "LOGIN": {
+        "appVersion": "02.0.860",
+        "channel": {
+          "id": "Tv"
+        },
+        "natco": "hr",
+        "type": "telekom",
+        "forceRegister": "false",
+        "context": "login",
+        "device": {
+          "id": "6cab5dcd-153f-473d-8e79-71c1880ca7a4",
+          "model": "WEB",
+          "os": "Windows",
+          "deviceName": "WEB",
+          "manageDevice": "false",
+          "deviceType": "WEB",
+          "deviceOS": "Windows",
+          "deviceModel": "web|web|Chrome-119|02.0.860|1",
+          "deviceManufacturer": "Windows 10",
+          "concurrencyLimitParam": "TVSOA-restriction-unmanagedDeviceStreamLimit",
+          "broadcastingStreamLimitationApplies": "false"
+        },
+        "telekomLogin": {
+          "username": "",
+          "password": ""
+        }
+      }
+    },
+    "ME": {
+      "LOGIN": {
+        "appVersion": "02.0.830",
+        "channel": {
+          "id": "Tv"
+        },
+        "natco": "me",
+        "type": "telekom",
+        "forceRegister": "false",
+        "context": "login",
+        "device": {
+          "id": "0a8d3b8b-b1e5-44b0-ba20-faa5a4e6fdc3",
+          "model": "WEB",
+          "os": "Windows",
+          "deviceName": "WEB",
+          "manageDevice": "false",
+          "deviceType": "WEB",
+          "deviceOS": "Windows",
+          "deviceModel": "web|web|Chrome-119|02.0.830|1",
+          "deviceManufacturer": "Windows 10",
+          "concurrencyLimitParam": "TVSOA-restriction-unmanagedDeviceStreamLimit",
+          "broadcastingStreamLimitationApplies": "false"
+        },
+        "telekomLogin": {
+          "username": "",
+          "password": ""
+        }
+      }
+    }
+  },
+  "params": {
+    "AT": {
+      "SUBSCRIPTION_INFO": {
+        "app_language": "en_at",
+        "natco_code": "at"
+      },
+      "CHANNEL_INFO": {
+        "app_language": "en_at",
+        "natco_code": "at",
+        "natco_key": "AnKvxgMw8sLtT3tf4kvW0tQOL4D2PnGr"
+      },
+      "ADULT_INFO": {
+        "app_language": "en_at",
+        "natco_code": "at",
+        "natco_key": "AnKvxgMw8sLtT3tf4kvW0tQOL4D2PnGr",
+        "is_adult_token": true
+      },
+      "PAGE_IDS": {
+        "home": "60ac9d5f474da90001121e94",
+        "movies": "60cb715fd4254e0001c001fa",
+        "series": "60cb71870d68cc0001ea71b9",
+        "kids": "60cb71960d68cc0001ea71ba",
+        "sports": "60cb71a00d68cc0001ea71bb",
+        "my_content": "625fae18472e6e0001b2cc58",
+        "adult": "60cb750b4b18770001ae8164",
+        "videotech": "647f3e4e4b18770001ae81f6"
+      },
+      "MOVIES_CONTENT_PARAM": {
+        "page_size": "10",
+        "offset": [
+          "0",
+          "10",
+          "20"
+        ],
+        "natco_key": "AnKvxgMw8sLtT3tf4kvW0tQOL4D2PnGr",
+        "app_language": "en_at",
+        "natco_code": "at"
+      },
+      "MOVIES_ITEMS_PARAM": {
+        "page_size": "16",
+        "offset": "0",
+        "natco_key": "AnKvxgMw8sLtT3tf4kvW0tQOL4D2PnGr",
+        "app_language": "en_at",
+        "natco_code": "at"
+      },
+      "PAGE_CONTENT_PARAM": {
+        "page_size": "16",
+        "offset": "0",
+        "natco_key": "AnKvxgMw8sLtT3tf4kvW0tQOL4D2PnGr",
+        "app_language": "en_at",
+        "natco_code": "at"
+      },
+      "ADULT_CONTENT_PARAM": {
+        "page_size": "16",
+        "offset": [
+          "0",
+          "10"
+        ],
+        "natco_key": "AnKvxgMw8sLtT3tf4kvW0tQOL4D2PnGr",
+        "app_language": "en_at",
+        "natco_code": "at",
+        "is_adult_token": true
+      },
+      "CREW_CONTENT_PARAM": {
+        "interacted_with_nPVR": "false",
+        "app_language": "en_at",
+        "natco_code": "at",
+        "natco_key": "AnKvxgMw8sLtT3tf4kvW0tQOL4D2PnGr"
+      },
+      "CREW_DETAIL_PARAM": {
+        "size": 20,
+        "offset": 0,
+        "isExtendedMode": "true",
+        "app_language": "en_at",
+        "natco_code": "at"
+      },
+      "EPG_SCHEDULE_PARAM": {
+        "app_language": "en_at",
+        "natco_code": "at",
+        "hour_range": 3,
+        "filler": true
+      },
+      "RECORDING_PARAM": {
+        "app_language": "en_at",
+        "natco_code": "at",
+        "type": "all",
+        "include_failed_state": "true"
+      },
+      "RENTAL_PARAM": {
+        "size": 20,
+        "offset": 0,
+        "natco_key": "AnKvxgMw8sLtT3tf4kvW0tQOL4D2PnGr",
+        "app_language": "en_at",
+        "natco_code": "at"
+      }
+    },
+    "PL": {
+      "SUBSCRIPTION_INFO": {
+        "app_language": "en_pl",
+        "natco_code": "pl"
+      },
+      "CHANNEL_INFO": {
+        "app_language": "en_pl",
+        "natco_code": "pl",
+        "natco_key": "ovINYLVrQsLj8wPDQzNYotQMkFha9PFF"
+      },
+      "PAGE_IDS": {
+        "movies": "625ea8d094a13100012f6b2e",
+        "home": "60e58bac497a5500011b8c6c",
+        "series": "61e68ad392816c0001a8bc99"
+      },
+      "PAGE_CONTENT_PARAM": {
+        "page_size": "10",
+        "offset": "0",
+        "natco_key": "ovINYLVrQsLj8wPDQzNYotQMkFha9PFF",
+        "app_language": "en_pl",
+        "natco_code": "pl"
+      },
+      "ADULT_INFO": {
+        "app_language": "en_pl",
+        "natco_code": "pl",
+        "natco_key": "ovINYLVrQsLj8wPDQzNYotQMkFha9PFF",
+        "is_adult_token": true
+      },
+      "EPG_SCHEDULE_PARAM": {
+        "app_language": "en_pl",
+        "natco_code": "pl",
+        "hour_range": 3,
+        "filler": true
+      }
+    },
+    "HR": {
+      "SUBSCRIPTION_INFO": {
+        "app_language": "en_hr",
+        "natco_code": "hr"
+      },
+      "CHANNEL_INFO": {
+        "app_language": "en_hr",
+        "natco_code": "hr",
+        "natco_key": "l2lyvGVbUm2EKJE96ImQgcc8PKMZWtbE"
+      },
+      "ADULT_INFO": {
+        "app_language": "en_hr",
+        "natco_code": "hr",
+        "natco_key": "l2lyvGVbUm2EKJE96ImQgcc8PKMZWtbE",
+        "is_adult_token": true
+      },
+      "PAGE_CONTENT_PARAM": {
+        "page_size": "16",
+        "offset": "0",
+        "natco_key": "l2lyvGVbUm2EKJE96ImQgcc8PKMZWtbE",
+        "app_language": "en_hr",
+        "natco_code": "hr"
+      },
+      "PAGE_IDS": {
+        "movies": "640b14ed55eb30000174377f",
+        "series": "640b14aed42f9600019a4c86",
+        "adult": "62a08dccff618e0001a38374",
+        "home": "61260e9988ed9d0001c921d6"
+      },
+      "ADULT_CHANNELS": {
+        "is_adult_token": true,
+        "app_language": "en_hr",
+        "natco_code": "hr"
+      },
+      "ADULT_CONTENT_PARAM": {
+        "page_size": "16",
+        "offset": "0",
+        "natco_key": "l2lyvGVbUm2EKJE96ImQgcc8PKMZWtbE",
+        "app_language": "en_hr",
+        "natco_code": "hr",
+        "is_adult_token": true
+      },
+      "EPG_SCHEDULE_PARAM": {
+        "app_language": "en_hr",
+        "natco_code": "hr",
+        "hour_range": 3,
+        "filler": true,
+        "current_offset": [
+          0,
+          3,
+          6,
+          9,
+          12,
+          15,
+          18,
+          21
+        ]
+      }
+    },
+    "ME": {
+      "SUBSCRIPTION_INFO": {
+        "app_language": "en_me",
+        "natco_code": "me"
+      },
+      "CHANNEL_INFO": {
+        "app_language": "me",
+        "natco_code": "me",
+        "natco_key": "ANKB5xVVywklLUd9WtEOh8eyLnlAypTM"
+      },
+      "ADULT_INFO": {
+        "app_language": "me",
+        "natco_code": "me",
+        "natco_key": "ANKB5xVVywklLUd9WtEOh8eyLnlAypTM",
+        "is_adult_token": true
+      },
+      "PAGE_IDS": {
+        "movies": "6389e0d624e9b80001576683",
+        "series": "648b152f7752ed0001be6bb3",
+        "adult": "6389e220d0aed70001bef1d9",
+        "home": "632439a4b8b8c2000196b513"
+      },
+      "PAGE_CONTENT_PARAM": {
+        "page_size": "10",
+        "offset": "0",
+        "natco_key": "ANKB5xVVywklLUd9WtEOh8eyLnlAypTM",
+        "app_language": "me",
+        "natco_code": "me"
+      },
+      "ADULT_CONTENT_PARAM": {
+        "page_size": "10",
+        "offset": "0",
+        "natco_key": "ANKB5xVVywklLUd9WtEOh8eyLnlAypTM",
+        "app_language": "me",
+        "natco_code": "me",
+        "is_adult_token": true
+      },
+      "EPG_SCHEDULE_PARAM": {
+        "app_language": "me",
+        "natco_code": "me",
+        "hour_range": 3,
+        "filler": true
+      }
+    },
+    "MKT": {
+      "SUBSCRIPTION_INFO": {
+        "app_language": "mk",
+        "natco_code": "mk"
+      },
+      "CHANNEL_INFO": {
+        "app_language": "mk",
+        "natco_code": "mk",
+        "natco_key": "HEEb5emU9KZG4prn2NaUkiv96g3IxpS6"
+      },
+      "ADULT_INFO": {
+        "app_language": "mk",
+        "natco_code": "mk",
+        "natco_key": "HEEb5emU9KZG4prn2NaUkiv96g3IxpS6",
+        "is_adult_token": true
+      },
+      "PAGE_IDS": {
+        "movies": "63ef4d6143d13000015d10be",
+        "adult": "64817cb7241fd50001ff80ce",
+        "home": "634d16a8e4b350000190888c"
+      },
+      "PAGE_CONTENT_PARAM": {
+        "page_size": "10",
+        "offset": "0",
+        "natco_key": "HEEb5emU9KZG4prn2NaUkiv96g3IxpS6",
+        "app_language": "mk",
+        "natco_code": "mk"
+      },
+      "ADULT_CONTENT_PARAM": {
+        "page_size": "10",
+        "offset": "0",
+        "natco_key": "HEEb5emU9KZG4prn2NaUkiv96g3IxpS6",
+        "app_language": "mk",
+        "natco_code": "mk",
+        "is_adult_token": true
+      },
+      "EPG_SCHEDULE_PARAM": {
+        "app_language": "mk",
+        "natco_code": "mk",
+        "hour_range": 3,
+        "filler": true
+      }
+    },
+    "HU": {
+      "SUBSCRIPTION_INFO": {
+        "app_language": "en",
+        "natco_code": "hu"
+      },
+      "CHANNEL_INFO": {
+        "app_language": "en",
+        "natco_code": "hu",
+        "natco_key": "Tydx7H7fJO6HxgjvJok0ZhVWFmX3om0P"
+      },
+      "ADULT_INFO": {
+        "app_language": "en",
+        "natco_code": "hu",
+        "natco_key": "Tydx7H7fJO6HxgjvJok0ZhVWFmX3om0P",
+        "is_adult_token": true
+      },
+      "PAGE_IDS": {
+        "movies": "5fd36f0eaa99230001e6c56b",
+        "series": "5fd36ee8aa99230001e6c56a",
+        "adult": "606418974b45690001b0adcf",
+        "home": "5fd35f4baa99230001e6c569"
+      },
+      "PAGE_CONTENT_PARAM": {
+        "page_size": "10",
+        "offset": "0",
+        "natco_key": "Tydx7H7fJO6HxgjvJok0ZhVWFmX3om0P",
+        "app_language": "en",
+        "natco_code": "hu"
+      },
+      "ADULT_CONTENT_PARAM": {
+        "page_size": "16",
+        "offset": [
+          "0",
+          "10"
+        ],
+        "natco_key": "Tydx7H7fJO6HxgjvJok0ZhVWFmX3om0P",
+        "app_language": "en",
+        "natco_code": "hu",
+        "is_adult_token": true
+      },
+      "EPG_SCHEDULE_PARAM": {
+        "app_language": "en",
+        "natco_code": "hu",
+        "hour_range": 3,
+        "filler": true
+      }
+    }
+  }
+}
