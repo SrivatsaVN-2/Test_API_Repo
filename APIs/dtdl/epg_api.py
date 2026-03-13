@@ -13,6 +13,7 @@ from APIs.dtdl.Interface import Interface
 from APIs.dtdl.base_api_client import BaseApiClient
 from APIs.dtdl.config_manager import Config_Manager
 from Utilities.Queries import APIQuery
+from Utilities.Logger import Logger
 
 """
 from tests.androidtv.api.dtdl.base_api_client import BaseApiClient
