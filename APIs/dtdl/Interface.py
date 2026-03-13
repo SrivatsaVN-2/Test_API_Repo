@@ -15,7 +15,7 @@ class Interface:
       from APIs.dtdl.channel_api import ChannelApiClient
 
       self._channel_api_client = ChannelApiClient(config_manager, self.natco_config)
-     return self._channel_api_client
+    return self._channel_api_client
   
   @property
   def home_api(self):
@@ -23,7 +23,7 @@ class Interface:
       from APIs.dtdl.home_api import HomeApiClient
 
       self._home_api_client = HomeApiClient(config_manager, self.natco_config)
-  return self._home_api_client
+    return self._home_api_client
 
   @property
   def epg_api(self):
