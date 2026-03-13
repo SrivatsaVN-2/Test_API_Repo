@@ -1,7 +1,12 @@
 import datetime
 import re
 from typing import Any, List, Optional
+import sys
+from pathlib import Path
 
+# add project root directory to python path
+ROOT_PATH = Path(__file__).resolve().parents[2]
+sys.path.append(str(ROOT_PATH))
 import pytz
 #import stbt
 from APIs.dtdl.Interface import Interface
