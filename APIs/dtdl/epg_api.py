@@ -23,7 +23,7 @@ from tests.androidtv.pages.utility.system_logger import Logger
 from tests.androidtv.pages.utility.utils import Utils
 """
 log = Logger().setup_logger("EPG.API")
-
+interface = Interface()
 
 def get_device_timezone():
     """
@@ -56,7 +56,7 @@ class EpgApiClient(BaseApiClient):
             super().__init__(config_manager, natco)
             self.station_to_channel_map = {}
             self.channels = []
-            self.interface = Interface()
+           
             self.language = interface.language
             self.device_and_user_details = interface.device_and_user_details
             self._initialize_station_channel_map()
@@ -501,8 +501,7 @@ def test_epg_apis() -> List[APIQuery.Program]:
     """
     Test basic EPG API functionality and return a list of Program objects.
     """
-    from APIs.dtdl.Interface import Interface
-    interface = Interface()
+   
     epg_api_client = interface.epg_api
     log.info("-----------EPG API Results------------------")
 
