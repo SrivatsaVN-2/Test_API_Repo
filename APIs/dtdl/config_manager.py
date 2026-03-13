@@ -32,9 +32,12 @@ LANGUAGE_MAPPING = {
 
 class ConfigManager:
     def __init__(self, config_file):
+        self.interface = Interface()
+        self.language = Interface.language
         # print(os.getcwd())
         with open(config_file, "r") as file:
             self.config = json.load(file)
+
 
     def get_endpoint(self, lang, endpoint_type):
         return self.config["endpoints"].get(lang, {}).get(endpoint_type, "")
