@@ -41,7 +41,9 @@ class Config_Manager:
             self.config = json.load(file)
 
     def get_endpoint(self, lang, endpoint_type):
-        return self.config["endpoints"].get(lang, {}).get(endpoint_type, "")
+        endpoint = self.config["endpoints"].get(lang, {}).get(endpoint_type, "")
+        print(f"Fetched endpoint for lang '{lang}' and type '{endpoint_type}': {endpoint}")
+        return endpoint
 
     def get_header(self, lang, header_type, token=""):
         header = self.config["headers"].get(lang, {}).get(header_type, {}).copy()
