@@ -26,58 +26,49 @@ class Config_Manager:
 
     def __init__(self, config_file, interface):
         """
-        Config manager receives Interface from the framework.
-        It should NOT fetch STB data itself.
+        Config manager receives Interface dependency.
         """
 
         self.interface = interface
         self.language = interface.language
         self.STBConfig = interface.STBConfig
 
-        # device + user data already provided by STBT repo
-        self.device_user_data = interface.user_and_device_details
-
         with open(config_file, "r") as file:
             self.config = json.load(file)
 
-    # ----------------------------------------------------
-    # LANGUAGE RESOLUTION
-    # ----------------------------------------------------
+    # ---------------------------------------------------------
 
-    def _resolve_language(self, lang):
+    def _map_language(self, lang):
         """
-        Resolve the correct language key using LANGUAGE_MAPPING.
+        Map device language + natco to config language key
         """
-
         natco = self.STBConfig.fdn_natco
 
         key = (lang, natco)
 
-        if key in LANGUAGE_MAPPING:
-            return LANGUAGE_MAPPING[key]
+        mapped_lang = LANGUAGE_MAPPING.get(key, lang)
 
-        # fallback to natco if mapping does not exist
-        return natco
+        return mapped_lang
 
-    # ----------------------------------------------------
-    # CONFIG ACCESSORS
-    # ----------------------------------------------------
+    # ---------------------------------------------------------
 
     def get_endpoint(self, lang, endpoint_type):
 
-        lang_key = self._resolve_language(lang)
+        mapped_lang = self._map_language(lang)
 
-        endpoint = self.config["endpoints"].get(lang_key, {}).get(endpoint_type, "")
+        endpoint = self.config.get("endpoints", {}).get(mapped_lang, {}).get(endpoint_type, "")
 
-        print(f"Fetched endpoint for lang '{lang_key}' and type '{endpoint_type}': {endpoint}")
+        print(f"Fetched endpoint for lang '{mapped_lang}' and type '{endpoint_type}': {endpoint}")
 
         return endpoint
 
+    # ---------------------------------------------------------
+
     def get_header(self, lang, header_type, token=""):
 
-        lang_key = self._resolve_language(lang)
+        mapped_lang = self._map_language(lang)
 
-        header = self.config["headers"].get(lang_key, {}).get(header_type, {}).copy()
+        header = self.config.get("headers", {}).get(mapped_lang, {}).get(header_type, {}).copy()
 
         if header_type == "OTHER":
             header["Authorization"] = f"Bearer {token}"
@@ -90,55 +81,60 @@ class Config_Manager:
 
         return header
 
+    # ---------------------------------------------------------
+
     def get_param(self, lang, param_type):
 
-        lang_key = self._resolve_language(lang)
+        mapped_lang = self._map_language(lang)
 
-        params = self.config["params"].get(lang_key, {}).get(param_type, {}).copy()
+        params = self.config.get("params", {}).get(mapped_lang, {}).get(param_type, {}).copy()
 
         if "app_language" in params:
 
             language = self.interface.language
-            key = (language, lang)
+            key = (language, mapped_lang)
 
             if key in LANGUAGE_MAPPING:
                 params["app_language"] = LANGUAGE_MAPPING[key]
 
         return params
 
+    # ---------------------------------------------------------
+
     def get_data(self, lang, data_type, username="", password=""):
 
-        lang_key = self._resolve_language(lang)
+        mapped_lang = self._map_language(lang)
 
-        data = self.config["data"].get(lang_key, {}).get(data_type, {}).copy()
+        data = self.config.get("data", {}).get(mapped_lang, {}).get(data_type, {}).copy()
 
-        # device info already provided by STBT repo
-        device_info = self.device_user_data
+        device_id = self.STBConfig.adb_device_id
 
-        device_id = device_info[0]
-        natco = device_info[1]
-        model = device_info[2]
-        user_id = device_info[3]
-        user_details = device_info[4]
+        utils = self.interface.utils
+        user_info = utils.get_device_and_user_info(device_id)
 
-        # handle both string and dict formats safely
-        if isinstance(user_details, str):
-            pwd = user_details
-            bff_token = ""
-        else:
-            pwd = user_details.get("passcode")
-            bff_token = user_details.get("bff_token")
+        if not user_info or len(user_info) < 5:
+            raise Exception("Invalid device/user data received from utils")
 
-        data["bff_token"] = bff_token
+        user_id = user_info[3]
+        user_details = user_info[4]
+
+        pwd = user_details.get("passcode")
+
+        data["bff_token"] = user_details.get("bff_token")
 
         if self.STBConfig.fdn_natco in ["HU SDMC", "HU SEI", "MKT"]:
             return data
 
         if data_type == "LOGIN":
 
-            login_block = data.setdefault("telekomLogin", {})
+            if username:
+                data["telekomLogin"]["username"] = username
+            else:
+                data["telekomLogin"]["username"] = user_id
 
-            login_block["username"] = username if username else user_id
-            login_block["password"] = password if password else pwd
+            if password:
+                data["telekomLogin"]["password"] = password
+            else:
+                data["telekomLogin"]["password"] = pwd
 
         return data
