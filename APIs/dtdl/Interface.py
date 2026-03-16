@@ -25,7 +25,7 @@ class Interface:
       self._home_api_client = HomeApiClient(config_manager, self.natco_config)
     return self._home_api_client
 
-  @property
+  
   def epg_api(self):
     if self._epg_api_client is None:
       from tests.Test_API_Repo.APIs.dtdl.epg_api import EpgApiClient
