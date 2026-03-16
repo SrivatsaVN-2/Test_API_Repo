@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Dict, Tuple, Union
 
 # Internal libraries
-from Utilities.Loggers import Logger
+from tests.Test_API_Repo.Utilities.Loggers import Logger
 
 
 log = Logger().setup_logger("api.Utils")
