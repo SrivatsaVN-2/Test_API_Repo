@@ -74,26 +74,26 @@ class BaseApiClient:
 
    def _refresh_access_token(self):
 
-    data = self.config_manager.get_data(self.language, "LOGIN")
+        data = self.config_manager.get_data(self.language, "LOGIN")
 
-    if data.get("bff_token") and STBConfig().fdn_natco in [
-        "HU SDMC",
-        "HU SEI",
-        "MKT",
-    ]:
-        self.access_token = data["bff_token"]
-        return
+         if data.get("bff_token") and STBConfig().fdn_natco in [
+             "HU SDMC",
+             "HU SEI",
+             "MKT",
+         ]:
+            self.access_token = data["bff_token"]
+            return
 
-    base_url = self.config_manager.get_endpoint(self.language, "BASE")
-    login_endpoint = self.config_manager.get_endpoint(self.language, "LOGIN")
+         base_url = self.config_manager.get_endpoint(self.language, "BASE")
+         login_endpoint = self.config_manager.get_endpoint(self.language, "LOGIN")
 
-    url = f"{base_url}{login_endpoint}"
+         url = f"{base_url}{login_endpoint}"
 
-    headers = self.config_manager.get_header(self.language, "LOGIN")
+         headers = self.config_manager.get_header(self.language, "LOGIN")
 
-    response = self.session.post(url, headers=headers, json=data)
+         response = self.session.post(url, headers=headers, json=data)
 
-    response.raise_for_status()
+         response.raise_for_status()
 
-    self.access_token = response.json().get("accessToken", "")
+         self.access_token = response.json().get("accessToken", "")
   
