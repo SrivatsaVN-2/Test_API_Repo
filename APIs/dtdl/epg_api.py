@@ -257,7 +257,7 @@ class EpgApiClient(BaseApiClient):
                 log.error("Invalid schedule data format: %s", schedule_data)
                 return []
 
-            channel_client = self.api_library.channel_api
+            channel_client = self.interface.channel_api
             channel_objs = channel_client.get_subscribed_channels(
                 APIQuery.ChannelDesc(size=1000), is_adult=program_desc.is_adult
             )
