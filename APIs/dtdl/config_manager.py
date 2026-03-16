@@ -5,8 +5,8 @@ import json
 
 
 LANGUAGE_MAPPING = {
-    ("at", "AT"): "de",
-    ("de", "AT"): "de",
+    ("at", "AT"): "at",
+    ("de", "AT"): "at",
     ("eng", "AT"): "en_at",
     ("hr", "HR"): "hr",
     ("eng", "HR"): "en_hr",
