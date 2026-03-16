@@ -4,7 +4,7 @@
 import json
 import os
 
-from APIs.dtdl.Interface import Interface
+from tests.Test_API_Repo.APIs.dtdl.Interface import Interface
 
 """
 from tests.androidtv.pages.helper import get_language
