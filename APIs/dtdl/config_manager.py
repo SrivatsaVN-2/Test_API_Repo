@@ -48,7 +48,7 @@ class Config_Manager:
 
         mapped_lang = LANGUAGE_MAPPING.get(key, lang)
 
-        return mapped_lang
+        return mapped_lang.upper()
 
     # ---------------------------------------------------------
 
