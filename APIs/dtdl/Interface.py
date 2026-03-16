@@ -15,6 +15,9 @@ class Interface:
     self._channel_api_client = None
     self._home_api_client = None
     self._epg_api_client = None
+
+    from tests.Test_API_Repo.Utilities.Utils import Utils
+    self.utils = Utils(self)
   @property
   def channel_api(self):
     if self._channel_api_client is None:
