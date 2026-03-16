@@ -26,13 +26,16 @@ class Config_Manager:
 
     def __init__(self, config_file, interface):
         """
-        Config manager should not create Interface.
-        It receives Interface as a dependency.
+        Config manager receives Interface from the framework.
+        It should NOT fetch STB data itself.
         """
 
         self.interface = interface
         self.language = interface.language
         self.STBConfig = interface.STBConfig
+
+        # device + user data already provided by STBT repo
+        self.device_user_data = interface.user_and_device_details
 
         with open(config_file, "r") as file:
             self.config = json.load(file)
@@ -72,13 +75,14 @@ class Config_Manager:
 
         data = self.config["data"].get(lang, {}).get(data_type, {}).copy()
 
-        device_id = self.STBConfig.adb_device_id
+        # use injected device/user data instead of reading stb_data.json
+        device_info = self.device_user_data
 
-        utils = self.interface.utils
-        user_info = utils.get_device_and_user_info(device_id)
-
-        user_id = user_info[3]
-        user_details = user_info[4]
+        device_id = device_info[0]
+        natco = device_info[1]
+        model = device_info[2]
+        user_id = device_info[3]
+        user_details = device_info[4]
 
         pwd = user_details.get("passcode")
 
