@@ -41,12 +41,12 @@ class Config_Manager:
             self.config = json.load(file)
 
     def get_endpoint(self, lang, endpoint_type):
-        endpoint = self.config["endpoints"].get(lang, {}).get(endpoint_type, "")
+        endpoint = self.config["endpoints"].get(lang.upper(), {}).get(endpoint_type, "")
         print(f"Fetched endpoint for lang '{lang}' and type '{endpoint_type}': {endpoint}")
         return endpoint
 
     def get_header(self, lang, header_type, token=""):
-        header = self.config["headers"].get(lang, {}).get(header_type, {}).copy()
+        header = self.config["headers"].get(lang.upper(), {}).get(header_type, {}).copy()
 
         if header_type == "OTHER":
             header["Authorization"] = f"Bearer {token}"
@@ -61,7 +61,7 @@ class Config_Manager:
 
     def get_param(self, lang, param_type):
 
-        params = self.config["params"].get(lang, {}).get(param_type, {}).copy()
+        params = self.config["params"].get(lang.upper(), {}).get(param_type, {}).copy()
 
         if "app_language" in params:
 
