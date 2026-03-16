@@ -72,7 +72,7 @@ class BaseApiClient:
         response.raise_for_status()
         return response.json()
 
-   def _refresh_access_token(self):
+    def _refresh_access_token(self):
 
         data = self.config_manager.get_data(self.language, "LOGIN")
 
