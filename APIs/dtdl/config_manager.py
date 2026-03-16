@@ -130,6 +130,9 @@ class Config_Manager:
 
         if data_type == "LOGIN":
 
+            if "telekomLogin" not in data:
+                data["telekomLogin"] = {}
+
             if username:
                 data["telekomLogin"]["username"] = username
             else:
