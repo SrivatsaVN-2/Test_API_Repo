@@ -64,7 +64,7 @@ class EpgApiClient(BaseApiClient):
             self.user_and_device_data = interface.user_and_device_details
             self.STBConfig = interface.STBConfig
 
-            from Utilities.Utils import Utils
+            from tests.Test_API_Repo.Utilities.Utils import Utils
             self.utils = Utils(interface)
 
             self._initialize_station_channel_map()
