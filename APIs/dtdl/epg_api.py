@@ -45,37 +45,33 @@ def get_device_timezone():
 """
 
 class EpgApiClient(BaseApiClient):
-   def __init__(self, interface):
-    """
-    Initialize the EpgApiClient using the shared Interface object.
 
-    Args:
-        interface (Interface): Shared API interface containing runtime configuration.
-    """
-    try:
-        # store interface reference
-        self.interface = interface
+    def __init__(self, interface):
+        try:
+            # store interface instance
+            self.interface = interface
 
-        # call base client
-        super().__init__(interface.config_manager)
+            # initialize base client
+            super().__init__(interface.config_manager)
 
-        self.station_to_channel_map = {}
-        self.channels = []
+            self.station_to_channel_map = {}
+            self.channels = []
 
-        # access shared values from interface
-        self.language = interface.language
-        self.device_and_user_details = interface.user_and_device_details
-        self.STBConfig = interface.STBConfig
+            # values from interface
+            self.language = interface.language
+            self.natco_config = interface.natco_config
+            self.major_version = interface.major_version
+            self.user_and_device_data = interface.user_and_device_details
+            self.STBConfig = interface.STBConfig
 
-        # initialize utils if needed
-        from Utilities.utils import Utils
-        self.utils = Utils(interface)
+            from Utilities.Utils import Utils
+            self.utils = Utils(interface)
 
-        # initialize channel map
-        self._initialize_station_channel_map()
+            self._initialize_station_channel_map()
 
-    except Exception as e:
-        log.error("Error initializing EpgApiClient: %s", str(e))
+        except Exception as e:
+            log.error("Error initializing EpgApiClient: %s", str(e))
+            raise
     def _initialize_station_channel_map(self) -> List[APIQuery.Channel]:
         """
         Initialize the mapping between station IDs and channel numbers and create a list of APIQuery.Channel objects

@@ -15,29 +15,22 @@ from tests.androidtv.pages.utility.utils import Utils #get device details and us
 
 class BaseApiClient:
     def __init__(self, config_manager):
-        # print("Calling Base Api Client")
+
         if config_manager:
             self.config_manager = config_manager
         else:
-            config_path = APIs/dtdl/ "config.json"
+            config_path = "APIs/dtdl/config.json"
             self.config_manager = ConfigManager(config_path)
-            
+
         self.language = None
         self.natco_config = None
         self.major_version = None
         self.user_and_device_data = None
         self.STBConfig = None
-            # self.language = stbt.get_config("device_under_test", "channel_lang")
+
         self.session = requests.Session()
         self.access_token = None
         self.adult_token = None
-        
-    
-        self.language = Interface.language
-        self.natco_config = Interface.natco_config
-        self.major_version = Interface.major_version
-        self.user_and_device_data = Interface.user_and_device_data
-        self.STBConfig = Interface.STBConfig
 
     def _get_adult_token_from_stb_data(self):
         """
