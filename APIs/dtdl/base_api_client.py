@@ -88,7 +88,10 @@ class BaseApiClient:
         base_url = self.config_manager.get_endpoint(self.language, "BASE")
         login_endpoint = self.config_manager.get_endpoint(self.language, "LOGIN")
 
-        url = f"{base_url}{login_endpoint}"
+        if login_endpoint.startswith("http"):
+            url = login_endpoint
+        else:
+            url = f"{base_url}{login_endpoint}"
 
         headers = self.config_manager.get_header(self.language, "LOGIN")
 
