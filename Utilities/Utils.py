@@ -36,11 +36,30 @@ class Utils:
             return None
 
     def get_device_and_user_info(self, device_id: str) -> Union[Tuple, str]:
-        """
-        Fetch device information from local JSON file.
-        """
+    """
+    Fetch device/user information.
 
-        # locate file relative to this module
+    Priority:
+    1. Use data injected from STB repo via Interface
+    2. Fallback to local stb_data.json (for standalone API usage)
+    """
+
+    # -----------------------------
+    # 1️⃣ Try injected data first
+    # -----------------------------
+        try:
+            if hasattr(self, "interface") and self.interface:
+                injected_data = getattr(self.interface, "user_and_device_details", None)
+
+            if injected_data:
+                return injected_data
+
+         except Exception:
+                pass
+
+    # -----------------------------
+    # 2️⃣ Fallback to local file
+    # -----------------------------
         filename = Path(__file__).resolve().parent / "stb_data.json"
 
         data = self.load_data_from_file(filename)
@@ -65,7 +84,6 @@ class Utils:
         total_ram = device_info.get("total_ram", "N/A")
 
         return (device_id, natco, model, user_id, user_info, total_ram)
-
     def parse_entry(self, entry: str) -> Dict[str, str]:
         """
         Parse friendly device entry string to extract metadata.
