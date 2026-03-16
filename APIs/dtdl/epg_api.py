@@ -14,6 +14,7 @@ from APIs.dtdl.base_api_client import BaseApiClient
 from APIs.dtdl.config_manager import Config_Manager
 from Utilities.Queries import APIQuery
 from Utilities.Loggers import Logger
+from Utilities.utils import Utils
 
 """
 from tests.androidtv.api.dtdl.base_api_client import BaseApiClient
@@ -44,25 +45,37 @@ def get_device_timezone():
 """
 
 class EpgApiClient(BaseApiClient):
-    def __init__(self, config_manager, natco: str):
-        """
-        Initialize the EpgApiClient with the given configuration manager and NatCo abbreviation.
+   def __init__(self, interface):
+    """
+    Initialize the EpgApiClient using the shared Interface object.
 
-        Args:
-            config_manager (ConfigManager): Configuration manager for the API client
-            natco (str): NatCo abbreviation used to fetch content
-        """
-        try:
-            super().__init__(config_manager, natco)
-            self.station_to_channel_map = {}
-            self.channels = []
+    Args:
+        interface (Interface): Shared API interface containing runtime configuration.
+    """
+    try:
+        # store interface reference
+        self.interface = interface
 
-            self.language = Interface.language
-            self.device_and_user_details = interface.device_and_user_details
-            self._initialize_station_channel_map()
-        except Exception as e:
-            log.error("Error initializing EpgApiClient: %s", str(e))
+        # call base client
+        super().__init__(interface.config_manager, interface.natco_config)
 
+        self.station_to_channel_map = {}
+        self.channels = []
+
+        # access shared values from interface
+        self.language = interface.language
+        self.device_and_user_details = interface.user_and_device_details
+        self.STBConfig = interface.STBConfig
+
+        # initialize utils if needed
+        from Utilities.utils import Utils
+        self.utils = Utils(interface)
+
+        # initialize channel map
+        self._initialize_station_channel_map()
+
+    except Exception as e:
+        log.error("Error initializing EpgApiClient: %s", str(e))
     def _initialize_station_channel_map(self) -> List[APIQuery.Channel]:
         """
         Initialize the mapping between station IDs and channel numbers and create a list of APIQuery.Channel objects
