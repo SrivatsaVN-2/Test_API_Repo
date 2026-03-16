@@ -7,7 +7,10 @@ class Interface:
     self.major_version = major_version
     self.natco_config = natco_config
     self.STBConfig = STBConfig
-    self.config_manager = Config_Manager()
+    
+    config_path = Path(__file__).resolve().parent / "config.json"
+    self.config_manager = Config_Manager(config_path, self)
+
     self._channel_api_client = None
     self._home_api_client = None
     self._epg_api_client = None
