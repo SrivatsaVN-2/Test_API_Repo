@@ -1,3 +1,4 @@
+from APIs.dtdl.config_manager import Config_Manager
 class Interface:
   def __init__(self,language, user_and_device_details, major_version, natco_config, STBConfig):
     #fields will be updated
@@ -6,6 +7,7 @@ class Interface:
     self.major_version = major_version
     self.natco_config = natco_config
     self.STBConfig = STBConfig
+    self.config_manager = Config_Manager()
     self._channel_api_client = None
     self._home_api_client = None
     self._epg_api_client = None
