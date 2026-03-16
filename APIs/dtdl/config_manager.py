@@ -40,13 +40,44 @@ class Config_Manager:
         with open(config_file, "r") as file:
             self.config = json.load(file)
 
+    # ----------------------------------------------------
+    # LANGUAGE RESOLUTION
+    # ----------------------------------------------------
+
+    def _resolve_language(self, lang):
+        """
+        Resolve the correct language key using LANGUAGE_MAPPING.
+        """
+
+        natco = self.STBConfig.fdn_natco
+
+        key = (lang, natco)
+
+        if key in LANGUAGE_MAPPING:
+            return LANGUAGE_MAPPING[key]
+
+        # fallback to natco if mapping does not exist
+        return natco
+
+    # ----------------------------------------------------
+    # CONFIG ACCESSORS
+    # ----------------------------------------------------
+
     def get_endpoint(self, lang, endpoint_type):
-        endpoint = self.config["endpoints"].get(lang.upper(), {}).get(endpoint_type, "")
-        print(f"Fetched endpoint for lang '{lang}' and type '{endpoint_type}': {endpoint}")
+
+        lang_key = self._resolve_language(lang)
+
+        endpoint = self.config["endpoints"].get(lang_key, {}).get(endpoint_type, "")
+
+        print(f"Fetched endpoint for lang '{lang_key}' and type '{endpoint_type}': {endpoint}")
+
         return endpoint
 
     def get_header(self, lang, header_type, token=""):
-        header = self.config["headers"].get(lang.upper(), {}).get(header_type, {}).copy()
+
+        lang_key = self._resolve_language(lang)
+
+        header = self.config["headers"].get(lang_key, {}).get(header_type, {}).copy()
 
         if header_type == "OTHER":
             header["Authorization"] = f"Bearer {token}"
@@ -61,7 +92,9 @@ class Config_Manager:
 
     def get_param(self, lang, param_type):
 
-        params = self.config["params"].get(lang.upper(), {}).get(param_type, {}).copy()
+        lang_key = self._resolve_language(lang)
+
+        params = self.config["params"].get(lang_key, {}).get(param_type, {}).copy()
 
         if "app_language" in params:
 
@@ -75,9 +108,11 @@ class Config_Manager:
 
     def get_data(self, lang, data_type, username="", password=""):
 
-        data = self.config["data"].get(lang, {}).get(data_type, {}).copy()
+        lang_key = self._resolve_language(lang)
 
-        # use injected device/user data instead of reading stb_data.json
+        data = self.config["data"].get(lang_key, {}).get(data_type, {}).copy()
+
+        # device info already provided by STBT repo
         device_info = self.device_user_data
 
         device_id = device_info[0]
@@ -86,6 +121,7 @@ class Config_Manager:
         user_id = device_info[3]
         user_details = device_info[4]
 
+        # handle both string and dict formats safely
         if isinstance(user_details, str):
             pwd = user_details
             bff_token = ""
@@ -100,17 +136,9 @@ class Config_Manager:
 
         if data_type == "LOGIN":
 
-            if "telekomLogin" not in data:
-                data["telekomLogin"] = {}
+            login_block = data.setdefault("telekomLogin", {})
 
-            if username:
-                data["telekomLogin"]["username"] = username
-            else:
-                data["telekomLogin"]["username"] = user_id
-
-            if password:
-                data["telekomLogin"]["password"] = password
-            else:
-                data["telekomLogin"]["password"] = pwd
+            login_block["username"] = username if username else user_id
+            login_block["password"] = password if password else pwd
 
         return data
