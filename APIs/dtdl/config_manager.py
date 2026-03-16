@@ -118,10 +118,13 @@ class Config_Manager:
         user_id = user_info[3]
         user_details = user_info[4]
 
-        pwd = user_details.get("passcode")
+        if isinstance(user_details, dict):
+            pwd = user_details.get("passcode")
+            data["bff_token"] = user_details.get("bff_token")
 
-        data["bff_token"] = user_details.get("bff_token")
-
+        else:
+            pwd = None
+            data["bff_token"] = None
         if self.STBConfig.fdn_natco in ["HU SDMC", "HU SEI", "MKT"]:
             return data
 
