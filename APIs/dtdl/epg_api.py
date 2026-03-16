@@ -57,7 +57,7 @@ class EpgApiClient(BaseApiClient):
         self.interface = interface
 
         # call base client
-        super().__init__(interface.config_manager, interface.natco_config)
+        super().__init__(interface.config_manager)
 
         self.station_to_channel_map = {}
         self.channels = []
