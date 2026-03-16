@@ -12,9 +12,9 @@ import pytz
 from APIs.dtdl.Interface import Interface
 from APIs.dtdl.base_api_client import BaseApiClient
 from APIs.dtdl.config_manager import Config_Manager
-from Utilities.Queries import APIQuery
-from Utilities.Loggers import Logger
-from Utilities.utils import Utils
+from tests.Test_API_Repo.Utilities.Queries import APIQuery
+from tests.Test_API_Repo.Utilities.Loggers import Logger
+from tests.Test_API_Repo.Utilities.utils import Utils
 
 """
 from tests.androidtv.api.dtdl.base_api_client import BaseApiClient
