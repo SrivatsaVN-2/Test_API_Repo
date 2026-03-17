@@ -23,6 +23,7 @@ class ChannelApiClient(BaseApiClient):
             self.channel_desc = APIQuery.ChannelDesc()
 
             # ✅ NATCO from interface
+            print(self.interface.natco_config)
             self.natco = (self.interface.natco_config or "").upper()
 
             # ✅ CMS Integration
