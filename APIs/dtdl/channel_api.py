@@ -17,21 +17,16 @@ class ChannelApiClient(BaseApiClient):
 
     def __init__(self, interface):
         try:
-            # ✅ Correct initialization
             super().__init__(interface=interface)
 
             self.interface = interface
             self.channel_desc = APIQuery.ChannelDesc()
 
-            # ✅ FIX: Get natco from interface (not global / static)
-            self.natco = (interface.get_natco() or "").upper()
+            # ✅ NATCO from interface
+            self.natco = (self.interface.get_natco() or "").upper()
 
-            # Optional CMS (safe import)
-            try:
-                from tests.Test_API_Repo.APIs.cms.cms_api_client import CMSApiClient
-                self.cms_client = CMSApiClient(interface)
-            except Exception:
-                self.cms_client = None
+            # ✅ CMS Integration
+            self.cms_client = self._init_cms_client()
 
             self.channel_mapping = {}
             self.temp_channels_size = 1000
@@ -44,56 +39,55 @@ class ChannelApiClient(BaseApiClient):
             self.channel_mapping = {}
 
     # =====================================================
-    # 🔹 CHANNEL MAPPING (fixed natco usage + duplicate loop removed)
+    # 🔹 CMS CLIENT
     # =====================================================
 
-    def _initialize_channel_mapping(self) -> None:
+    def _init_cms_client(self):
         try:
-            natco_name = self.natco
+            from tests.Test_API_Repo.APIs.cms.cms_api_client import CMSApiClient
+            return CMSApiClient(interface=self.interface)
+        except Exception:
+            log.warning("CMS client not available")
+            return None
 
+    # =====================================================
+    # 🔹 CHANNEL MAPPING
+    # =====================================================
+
+    def _initialize_channel_mapping(self):
+        try:
             use_serial = False
+
             if self.cms_client:
-                use_serial = self.cms_client.get_channel_serial_config()
+                try:
+                    use_serial = self.cms_client.get_channel_serial_config()
+                except Exception:
+                    pass
 
             if not use_serial:
                 self.channel_mapping = {}
                 return
 
-            all_channels = self._fetch_api_data("CHANNEL", None, is_adult=True)
+            all_channels = self._fetch_api_data("CHANNEL", is_adult=True)
 
-            if not all_channels:
-                self.channel_mapping = {}
-                return
-
-            # ❌ removed duplicate loop bug
             channel_numbers = [
                 ch.get("channel_number")
                 for ch in all_channels
                 if ch.get("channel_number") is not None
             ]
 
-            if not channel_numbers:
-                self.channel_mapping = {}
-                return
-
             self.channel_mapping = {
-                api_num: idx + 1
-                for idx, api_num in enumerate(sorted(channel_numbers))
+                num: idx + 1
+                for idx, num in enumerate(sorted(channel_numbers))
             }
 
         except Exception as e:
-            log.error("Error initializing mapping: %s", str(e))
+            log.error("Channel mapping failed: %s", str(e))
             self.channel_mapping = {}
 
-    # =====================================================
-    # 🔹 FIXED NATCO USAGE
-    # =====================================================
-
-    def map_channel_number(self, number: int, to_serial: bool = True) -> int:
+    def map_channel_number(self, number: int, to_serial=True):
         try:
-            natco_name = self.natco
-
-            if natco_name in self.SKIP_HU_NATCOS:
+            if self.natco in self.SKIP_HU_NATCOS:
                 return number
 
             if not self.channel_mapping:
@@ -105,93 +99,57 @@ class ChannelApiClient(BaseApiClient):
             reverse = {v: k for k, v in self.channel_mapping.items()}
             return reverse.get(number, number)
 
-        except Exception as e:
-            log.error("Mapping error: %s", str(e))
+        except Exception:
             return number
 
     # =====================================================
-    # 🔹 FETCH API (headers cleaned — base handles auth)
+    # 🔹 API FETCH
     # =====================================================
 
-    def _fetch_api_data(
-        self,
-        api_type: str,
-        recursion_depth: Optional[int] = None,
-        is_adult: bool = False,
-    ) -> List[Dict]:
+    def _fetch_api_data(self, api_type, recursion_depth=None, is_adult=False):
 
-        endpoint_config = {
-            "CHANNEL": {
-                "endpoint": "CHANNEL_INFO",
-                "param_type": "ADULT_INFO" if is_adult else "CHANNEL_INFO",
-            },
-            "SUBSCRIPTION": {
-                "endpoint": "SUBSCRIPTION_URL",
-                "param_type": "SUBSCRIPTION_INFO",
-            },
-            "FAVORITES": {
-                "endpoint": "FAVORITE_CHANNELS",
-                "param_type": "CHANNEL_INFO",
-            },
+        config = {
+            "CHANNEL": ("CHANNEL_INFO", "ADULT_INFO" if is_adult else "CHANNEL_INFO"),
+            "SUBSCRIPTION": ("SUBSCRIPTION_URL", "SUBSCRIPTION_INFO"),
+            "FAVORITES": ("FAVORITE_CHANNELS", "CHANNEL_INFO"),
         }
 
-        assert api_type in endpoint_config, f"Invalid API type: {api_type}"
+        endpoint_key, param_key = config[api_type]
 
-        config = endpoint_config[api_type]
+        base = self.config_manager.get_endpoint(self.language, "BASE")
+        endpoint = self.config_manager.get_endpoint(self.language, endpoint_key)
 
-        try:
-            base_url = self.config_manager.get_endpoint(self.language, "BASE")
-            endpoint = self.config_manager.get_endpoint(
-                self.language, config["endpoint"]
-            )
+        url = f"{base}{endpoint}"
 
-            url = f"{base_url}{endpoint}"
+        params = self.config_manager.get_param(self.language, param_key)
 
-            params = self.config_manager.get_param(
-                self.language, config["param_type"]
-            )
+        response = self.make_request(
+            "GET",
+            url,
+            params=params,
+            requires_adult_token=is_adult,
+        )
 
-            # ✅ Let BaseApiClient manage headers + auth
-            response_data = self.make_request(
-                "GET",
-                url,
-                params=params,
-                requires_adult_token=is_adult,
-            )
+        return self._extract_data_from_response(response)
 
-            return self._extract_data_from_response(
-                response_data, recursion_depth
-            )
-
-        except Exception as e:
-            log.error("Failed API call %s: %s", api_type, str(e))
-            raise AssertionError(f"{api_type} API failed")
+    def _extract_data_from_response(self, response_data, recursion_depth=None):
+        return response_data.get("channels", []) if response_data else []
 
     # =====================================================
-    # 🔹 FIXED get_natco_config USAGE → interface
+    # 🔹 CHANNEL OBJECT
     # =====================================================
 
     def _create_channel_object(self, ch, api_type, skip_serial_mapping=False):
 
-        original_number = ch.get("channel_number")
+        original = ch.get("channel_number")
 
-        natco_name = self.natco
-        should_skip = natco_name in self.SKIP_HU_NATCOS or skip_serial_mapping
-
-        if should_skip:
-            mapped = original_number
+        if self.natco in self.SKIP_HU_NATCOS or skip_serial_mapping:
+            mapped = original
         else:
             mapped = (
-                self.map_channel_number(original_number, True)
-                if self.channel_mapping and original_number
-                else original_number
+                self.map_channel_number(original)
+                if original else original
             )
-
-        is_subscribed = (
-            True
-            if api_type in ["SUBSCRIPTION", "FAVORITES"]
-            else ch.get("is_subscribed", None)
-        )
 
         return APIQuery.Channel(
             channel_number=mapped,
@@ -199,6 +157,116 @@ class ChannelApiClient(BaseApiClient):
             title=ch.get("title"),
             is_adult=ch.get("is_adult", False),
             is_audio=ch.get("is_audio", False),
-            is_subscribed=is_subscribed,
+            is_subscribed=(
+                True if api_type in ["SUBSCRIPTION", "FAVORITES"]
+                else ch.get("is_subscribed")
+            ),
             description=ch.get("description"),
         )
+
+    # =====================================================
+    # 🔹 FILTER
+    # =====================================================
+
+    def _filter_channel_data(self, channel_data, desc, api_type):
+
+        result = []
+
+        for ch in channel_data:
+            num = ch.get("channel_number")
+            title = ch.get("title")
+
+            if num is None:
+                continue
+
+            mapped = self.map_channel_number(num)
+
+            if desc.exclude_channel_number == mapped:
+                continue
+
+            if desc.is_audio is True and not ch.get("is_audio"):
+                continue
+
+            if desc.is_adult is False and ch.get("is_adult"):
+                continue
+
+            if desc.title and title != desc.title:
+                continue
+
+            result.append(self._create_channel_object(ch, api_type))
+
+        result.sort(key=lambda x: x.channel_number or 0)
+
+        if desc.select_random and result:
+            return [random.choice(result)]
+
+        return result[: desc.size or len(result)]
+
+    # =====================================================
+    # 🔹 PUBLIC APIs
+    # =====================================================
+
+    def get_channels(self, desc=None):
+        desc = desc or self.channel_desc
+
+        data = self._fetch_api_data(
+            "CHANNEL",
+            is_adult=(desc.is_adult is not False),
+        )
+
+        return self._filter_channel_data(data, desc, "CHANNEL")
+
+    def get_subscribed_channels(self, desc=None, is_adult=None):
+        desc = desc or self.channel_desc
+
+        data = self._fetch_api_data("SUBSCRIPTION", is_adult=is_adult)
+
+        return self._filter_channel_data(data, desc, "SUBSCRIPTION")
+
+    def get_favorite_channels(self, desc=None):
+        desc = desc or self.channel_desc
+
+        data = self._fetch_api_data("FAVORITES")
+
+        return self._filter_channel_data(data, desc, "FAVORITES")
+
+    # =====================================================
+    # 🔹 UTILITIES
+    # =====================================================
+
+    def get_first_channel_number(self):
+        channels = self.get_subscribed_channels(
+            APIQuery.ChannelDesc(size=1000)
+        )
+
+        nums = [ch.channel_number for ch in channels if ch.channel_number]
+
+        return str(min(nums)) if nums else False
+
+    def get_invalid_channel_number(self):
+
+        all_channels = self._fetch_api_data("CHANNEL", is_adult=True)
+
+        nums = [ch["channel_number"] for ch in all_channels if ch.get("channel_number")]
+
+        if not nums:
+            raise AssertionError("No channels available")
+
+        missing = self.get_missing_channels(nums)
+
+        if missing:
+            return str(random.choice(missing))
+
+        return str(max(nums) + random.randint(1, 50))
+
+    def get_missing_channels(self, nums: List[int]):
+
+        nums = sorted(nums)
+
+        missing = []
+
+        for i in range(len(nums) - 1):
+            if nums[i + 1] - nums[i] > 1:
+                missing.extend(range(nums[i] + 1, nums[i + 1]))
+
+        return missing
