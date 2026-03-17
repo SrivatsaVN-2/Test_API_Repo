@@ -1,7 +1,7 @@
 # config_manager.py
-# Handles reading and providing configuration data from a JSON file
 
 import json
+from pathlib import Path
 
 
 LANGUAGE_MAPPING = {
@@ -23,124 +23,182 @@ LANGUAGE_MAPPING = {
 
 
 class Config_Manager:
-
     def __init__(self, config_file, interface):
         """
-        Config manager receives Interface dependency.
+        Config manager uses Interface as the single data source
         """
 
-        self.interface = interface
-        self.language = interface.language
-        self.STBConfig = interface.STBConfig
+        if not interface:
+            raise ValueError("Interface instance is required")
 
-        with open(config_file, "r") as file:
+        # -----------------------------------
+        # 1. Store Interface
+        # -----------------------------------
+        self.interface = interface
+        self.language = interface.get_language()
+        self.stb_config = interface.stb_config
+        self.user_data = interface.user_and_device_details
+
+        # -----------------------------------
+        # 2. Load config.json safely
+        # -----------------------------------
+        config_path = Path(config_file)
+        if not config_path.exists():
+            raise FileNotFoundError(f"Config file not found: {config_path}")
+
+        with open(config_path, "r") as file:
             self.config = json.load(file)
 
-    # ---------------------------------------------------------
+    # =====================================================
+    # 🔹 LANGUAGE MAPPING
+    # =====================================================
 
     def _map_language(self, lang):
         """
         Map device language + natco to config language key
         """
-        natco = self.STBConfig.fdn_natco
+        natco = getattr(self.stb_config, "fdn_natco", None)
 
-        key = (lang, natco)
-
+        key = (lang.lower(), natco)
         mapped_lang = LANGUAGE_MAPPING.get(key, lang)
 
         return mapped_lang.upper()
 
-    # ---------------------------------------------------------
+    # =====================================================
+    # 🔹 ENDPOINTS
+    # =====================================================
 
     def get_endpoint(self, lang, endpoint_type):
-
         mapped_lang = self._map_language(lang)
 
-        endpoint = self.config.get("endpoints", {}).get(mapped_lang, {}).get(endpoint_type, "")
+        endpoint = (
+            self.config.get("endpoints", {})
+            .get(mapped_lang, {})
+            .get(endpoint_type, "")
+        )
 
-        print(f"Fetched endpoint for lang '{mapped_lang}' and type '{endpoint_type}': {endpoint}")
+        print(f"[CONFIG] Endpoint → {mapped_lang} | {endpoint_type} = {endpoint}")
 
         return endpoint
 
-    # ---------------------------------------------------------
+    # =====================================================
+    # 🔹 HEADERS
+    # =====================================================
 
     def get_header(self, lang, header_type, token=""):
-
         mapped_lang = self._map_language(lang)
 
-        header = self.config.get("headers", {}).get(mapped_lang, {}).get(header_type, {}).copy()
+        header = (
+            self.config.get("headers", {})
+            .get(mapped_lang, {})
+            .get(header_type, {})
+            .copy()
+        )
 
-        if header_type == "OTHER":
+        # -----------------------------------
+        # Dynamic injection
+        # -----------------------------------
+        if header_type == "OTHER" and token:
             header["Authorization"] = f"Bearer {token}"
 
-        elif header_type == "BFF_OTHER":
+        elif header_type == "BFF_OTHER" and token:
             header["bff_token"] = token
-
-            if "x-adult-token" in header:
-                del header["x-adult-token"]
+            header.pop("x-adult-token", None)
 
         return header
 
-    # ---------------------------------------------------------
+    # =====================================================
+    # 🔹 PARAMS
+    # =====================================================
 
     def get_param(self, lang, param_type):
-
         mapped_lang = self._map_language(lang)
 
-        params = self.config.get("params", {}).get(mapped_lang, {}).get(param_type, {}).copy()
+        params = (
+            self.config.get("params", {})
+            .get(mapped_lang, {})
+            .get(param_type, {})
+            .copy()
+        )
 
+        # -----------------------------------
+        # Dynamic language override
+        # -----------------------------------
         if "app_language" in params:
-
-            language = self.interface.language
-            key = (language, mapped_lang)
+            device_lang = self.interface.get_language()
+            key = (device_lang.lower(), mapped_lang.lower())
 
             if key in LANGUAGE_MAPPING:
                 params["app_language"] = LANGUAGE_MAPPING[key]
 
         return params
 
-    # ---------------------------------------------------------
+    # =====================================================
+    # 🔹 DATA (IMPORTANT FIXED PART)
+    # =====================================================
 
     def get_data(self, lang, data_type, username="", password=""):
+        """
+        Fetch request payloads using Interface data (NO re-fetching)
+        """
 
         mapped_lang = self._map_language(lang)
 
-        data = self.config.get("data", {}).get(mapped_lang, {}).get(data_type, {}).copy()
+        data = (
+            self.config.get("data", {})
+            .get(mapped_lang, {})
+            .get(data_type, {})
+            .copy()
+        )
 
-        device_id = self.STBConfig.adb_device_id
+        if not data:
+            raise ValueError(f"No data found for {mapped_lang} → {data_type}")
 
-        utils = self.interface.utils
-        user_info = utils.get_device_and_user_info(device_id)
+        # -----------------------------------
+        # Extract from Interface (clean way)
+        # -----------------------------------
+        user_id = self.interface.get_user_id()
+        device_id = self.interface.get_device_id()
+        user_details = self.user_data or {}
 
-        if not user_info or len(user_info) < 5:
-            raise Exception("Invalid device/user data received from utils")
-
-        user_id = user_info[3]
-        user_details = user_info[4]
+        # -----------------------------------
+        # Extract tokens safely
+        # -----------------------------------
+        bff_token = ""
+        passcode = ""
 
         if isinstance(user_details, dict):
-            pwd = user_details.get("passcode")
-            data["bff_token"] = user_details.get("bff_token")
+            bff_token = user_details.get("bff_token", "")
+            passcode = user_details.get("passcode", "")
 
-        else:
-            pwd = None
-            data["bff_token"] = None
-        if self.STBConfig.fdn_natco in ["HU SDMC", "HU SEI", "MKT"]:
+        # Inject into payload
+        data["bff_token"] = bff_token
+
+        # -----------------------------------
+        # NATCO shortcut (no login needed)
+        # -----------------------------------
+        if getattr(self.stb_config, "fdn_natco", None) in [
+            "HU SDMC",
+            "HU SEI",
+            "MKT",
+        ]:
             return data
 
+        # -----------------------------------
+        # LOGIN handling
+        # -----------------------------------
         if data_type == "LOGIN":
 
-            if "telekomLogin" not in data:
-                data["telekomLogin"] = {}
+            data.setdefault("telekomLogin", {})
 
-            if username:
-                data["telekomLogin"]["username"] = username
-            else:
-                data["telekomLogin"]["username"] = user_id
+            data["telekomLogin"]["username"] = username or user_id
+            data["telekomLogin"]["password"] = password or passcode
 
-            if password:
-                data["telekomLogin"]["password"] = password
-            else:
-                data["telekomLogin"]["password"] = pwd
+            # Safety check
+            if not data["telekomLogin"]["username"]:
+                raise ValueError("Username missing in LOGIN payload")
+
+            if not data["telekomLogin"]["password"]:
+                raise ValueError("Password missing in LOGIN payload")
 
         return data
