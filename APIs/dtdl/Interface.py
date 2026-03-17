@@ -24,6 +24,12 @@ class Interface:
       from tests.Test_API_Repo.APIs.dtdl.epg_api import EpgApiClient
       self._epg_api_client = EpgApiClient(interface = self)
     return self._epg_api_client
+
+  def channel_api(self):
+    if self._channel_api_client == None:
+      from tests.Test_API_Repo.APIs.dtdl.channel_api import ChannelApiClient
+      self._channel_api_client = ChannelApiClient(interface = self)
+    return self._channel_api_client
   
   
   
