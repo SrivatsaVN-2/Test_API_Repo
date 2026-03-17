@@ -2,7 +2,7 @@ import json
 from typing import Dict, Optional
 
 from tests.Test_API_Repo.Utilities.Loggers import Logger
-from testsTest_API_RepoAPIs.cmsdata.cms_data_handler import CMSDataHandler
+from testsTest_API_Repo.APIs.cmsdata.cms_data_handler import CMSDataHandler
 
 log = Logger().setup_logger("CMS.Test")
 
