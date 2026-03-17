@@ -24,7 +24,7 @@ class CMSApiClient:
         # -----------------------------------
         # 🔹 Get natco from Interface
         # -----------------------------------
-        self.natco = (self.interface.get_natco() or "").split(" ")[0]
+        self.natco = (self.interface.natco_config.get("natco") or "").split(" ")[0]
 
         # -----------------------------------
         # 🔹 CMS handler
