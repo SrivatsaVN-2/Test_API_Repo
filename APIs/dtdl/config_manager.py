@@ -125,7 +125,7 @@ class Config_Manager:
         # Dynamic language override
         # -----------------------------------
         if "app_language" in params:
-            device_lang = self.interface.get_language()
+            device_lang = self.interface.language
             key = (device_lang.lower(), mapped_lang.lower())
 
             if key in LANGUAGE_MAPPING:
