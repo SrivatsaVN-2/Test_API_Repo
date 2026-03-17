@@ -18,22 +18,8 @@ class Interface:
 
     from tests.Test_API_Repo.Utilities.Utils import Utils
     self.utils = Utils(self)
-  @property
-  def channel_api(self):
-    if self._channel_api_client is None:
-      from APIs.dtdl.channel_api import ChannelApiClient
-
-      self._channel_api_client = ChannelApiClient(config_manager, self.natco_config)
-    return self._channel_api_client
   
-  @property
-  def home_api(self):
-    if self._home_api_client is None:
-      from APIs.dtdl.home_api import HomeApiClient
-
-      self._home_api_client = HomeApiClient(config_manager, self.natco_config)
-    return self._home_api_client
-
+  
   
   def epg_api(self):
     if self._epg_api_client is None:
