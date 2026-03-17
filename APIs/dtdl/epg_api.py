@@ -56,7 +56,7 @@ class EpgApiClient(BaseApiClient):
 
     def _initialize_station_channel_map(self) -> List[APIQuery.Channel]:
         try:
-            channel_client = self.interface.channel_api
+            channel_client = self.interface.channel_api()
 
             channels = channel_client.get_subscribed_channels(
                 APIQuery.ChannelDesc(size=1000)
