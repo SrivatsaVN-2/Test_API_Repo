@@ -6,7 +6,7 @@ from tests.androidtv.pages.adb.adb import ADBCommand
 from tests.androidtv.pages.utility.system_logger import Logger
 from tests.androidtv.pages.utility.stbconfig import STBConfig
 """
-from APIs.dtdl.Interface import Interface
+from tests.Test_API_Repo.APIs.dtdl.Interface import Interface
 
 log = Logger().setup_logger("CMS.Data")
 
