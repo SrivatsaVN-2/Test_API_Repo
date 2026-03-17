@@ -35,7 +35,7 @@ class Config_Manager:
         # 1. Store Interface
         # -----------------------------------
         self.interface = interface
-        self.language = interface.get_language()
+        self.language = interface.language.upper()
         self.stb_config = interface.stb_config
         self.user_data = interface.user_and_device_details
 
