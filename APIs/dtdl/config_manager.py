@@ -158,8 +158,8 @@ class Config_Manager:
         # Extract from Interface (clean way)
         # -----------------------------------
         user_id = self.user_data[3]
-        device_id = self.interface.get_device_id()
-        user_details = self.user_data or {}
+        device_id = self.user_data[0]
+        user_details = self.user_data[4] or {}
 
         # -----------------------------------
         # Extract tokens safely
