@@ -32,7 +32,7 @@ class BaseApiClient:
         # -----------------------------------
         # 3. Pull data from Interface (clean way)
         # -----------------------------------
-        self.language = self.interface.get_language()
+        self.language = self.interface.language
         self.natco_config = self.interface.natco_config
         self.major_version = self.interface.major_version
         self.user_and_device_data = self.interface.user_and_device_details
