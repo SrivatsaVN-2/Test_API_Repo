@@ -44,7 +44,7 @@ class ChannelApiClient(BaseApiClient):
 
     def _init_cms_client(self):
         try:
-            from tests.Test_API_Repo.APIs.cms.cms_api_client import CMSApiClient
+            from tests.Test_API_Repo.APIs.cmsdata.cms_data import CMSApiClient
             return CMSApiClient(interface=self.interface)
         except Exception:
             log.warning("CMS client not available")
