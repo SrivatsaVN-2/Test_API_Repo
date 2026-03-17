@@ -36,7 +36,7 @@ class BaseApiClient:
         self.natco_config = self.interface.natco_config
         self.major_version = self.interface.major_version
         self.user_and_device_data = self.interface.user_and_device_details
-        self.stb_config = self.interface.stb_config
+        self.stb_config = self.interface.STBConfig
 
         # -----------------------------------
         # 4. Session setup
