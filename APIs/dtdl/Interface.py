@@ -22,7 +22,7 @@ class Interface:
   def epg_api(self):
     if self._epg_api_client == None:
       from tests.Test_API_Repo.APIs.dtdl.epg_api import EpgApiClient
-      self._epg_api_client = EpgApiClient()
+      self._epg_api_client = EpgApiClient(interface = self)
     return self._epg_api_client
   
   
