@@ -18,6 +18,12 @@ class Interface:
 
     from tests.Test_API_Repo.Utilities.Utils import Utils
     self.utils = Utils(self)
+
+  def epg_api(self):
+    if self._epg_api_client == None:
+      from tests.Test_API_Repo.APIs.dtdl.epg_api import EpgApiClient
+      self._epg_api_client = EpgApiClient()
+    return self._epg_api_client
   
   
   
