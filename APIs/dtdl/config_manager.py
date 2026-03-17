@@ -36,7 +36,7 @@ class Config_Manager:
         # -----------------------------------
         self.interface = interface
         self.language = interface.language.upper()
-        self.stb_config = interface.stb_config
+        self.stb_config = interface.STBConfig
         self.user_data = interface.user_and_device_details
 
         # -----------------------------------
