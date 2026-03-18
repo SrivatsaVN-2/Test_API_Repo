@@ -1,7 +1,7 @@
 import random
-from api_repo.base_api_client import BaseApiClient
-from api_repo.datatype import APIQuery
-from api_repo.logger import Logger
+from tests.Test_API_Repo.APIs.dtdl.base_api_client import BaseApiClient
+from tests.Test_API_Repo.Utilities.Queries import APIQuery
+from tests.Test_API_Repo.Utilities.Loggers import Logger
 
 log = Logger().setup_logger("moviesAPI")
 
