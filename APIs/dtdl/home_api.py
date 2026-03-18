@@ -3,7 +3,7 @@ from typing import List, Dict, Any
 
 from tests.Test_API_Repo.APIs.dtdl.base_api_client import BaseApiClient
 from tests.Test_API_Repo.Utilities.Queries import APIQuery
-from tests.androidtv.pages.utility.system_logger import Logger
+from tests.Test_API_Repo.Utilities.Loggers import Logger
 
 
 log = Logger().setup_logger("API.Home")
