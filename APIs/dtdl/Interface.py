@@ -15,10 +15,18 @@ class Interface:
     self._channel_api_client = None
     self._home_api_client = None
     self._epg_api_client = None
+    self._movies_api_client = None
+  
 
     from tests.Test_API_Repo.Utilities.Utils import Utils
     self.utils = Utils(self)
 
+  def movies_api(self):
+    if self._movies_api_client == None:
+      from tests.Test_API_Repo.APIs.dtdl.movies_api import MoviesApiClient
+      self._movies_api_client = MoviesApiClient()
+    return self._movies_api_client
+    
   def epg_api(self):
     if self._epg_api_client == None:
       from tests.Test_API_Repo.APIs.dtdl.epg_api import EpgApiClient
