@@ -155,8 +155,7 @@ class MoviesApiClient(BaseApiClient):
             return None
 
     def _create_movie_object_from_asset_action(
-        self, item_data, asset_actions_data, rail_title=None, rail_index=None
-    ):
+        self, item_data, asset_actions_data, rail_title=None, rail_index=None):
     """
     Create a Movie object from item data and asset actions data.
     """
