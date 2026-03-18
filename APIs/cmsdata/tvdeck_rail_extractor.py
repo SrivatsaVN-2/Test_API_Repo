@@ -1,5 +1,5 @@
 from typing import Dict, List
-from tests.androidtv.pages.utility.system_logger import Logger
+from tests.Test_API_Repo.Utilities.Loggers import Logger
 
 log = Logger().setup_logger("CMS.RailExtractor")
 
