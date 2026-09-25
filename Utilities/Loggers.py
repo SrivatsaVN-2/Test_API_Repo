@@ -2,7 +2,13 @@
 import logging
 import time
 
-from tests.androidtv.pages.utility.stbconfig import STBConfig
+try:
+    from tests.androidtv.pages.utility.stbconfig import STBConfig
+except ImportError:
+    # Not present outside the STB test suite - only STBConfig.test_id is
+    # read by this module, and only from the note_test_*() helpers below.
+    class STBConfig:
+        test_id = ""
 
 NOTE_LEVEL = 25
 logging.addLevelName(NOTE_LEVEL, "NOTE")

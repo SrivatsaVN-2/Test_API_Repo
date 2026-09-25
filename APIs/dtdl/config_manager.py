@@ -77,8 +77,6 @@ class Config_Manager:
             .get(endpoint_type, "")
         )
 
-        print(f"[CONFIG] Endpoint → {mapped_lang} | {endpoint_type} = {endpoint}")
-
         return endpoint
 
     # =====================================================

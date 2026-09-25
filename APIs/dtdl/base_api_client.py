@@ -3,7 +3,7 @@
 import requests
 from pathlib import Path
 
-from tests.Test_API_Repo.APIs.dtdl.config_manager import Config_Manager
+from Test_API_Repo.APIs.dtdl.config_manager import Config_Manager
 
 
 class BaseApiClient:
@@ -128,9 +128,6 @@ class BaseApiClient:
         # 4. API call
         response = self.session.request(method, url, **kwargs)
 
-        print(f"[API] {method} {url}")
-        print(f"[HEADERS] {headers}")
-
         response.raise_for_status()
 
         try:
@@ -177,10 +174,6 @@ class BaseApiClient:
 
         headers = self.config_manager.get_header(self.language, "LOGIN")
 
-        print("🔐 LOGIN REQUEST")
-        print("URL:", url)
-        print("Headers:", headers)
-
         response = self.session.post(url, headers=headers, json=data)
         response.raise_for_status()
 
@@ -188,5 +181,3 @@ class BaseApiClient:
 
         if not self.access_token:
             raise ValueError("Access token missing in response")
-
-        print("✅ Access token fetched successfully")
