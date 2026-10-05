@@ -1,6 +1,6 @@
-from tests.Test_API_Repo.APIs.dtdl.base_api_client import BaseApiClient
-from tests.Test_API_Repo.Utilities.Queries import APIQuery
-from tests.Test_API_Repo.Utilities.Loggers import Logger
+from Test_API_Repo.APIs.dtdl.base_api_client import BaseApiClient
+from Test_API_Repo.Utilities.Queries import APIQuery
+from Test_API_Repo.Utilities.Loggers import Logger
 
 
 log = Logger().setup_logger("API.Recording")
@@ -293,3 +293,86 @@ class RecordingApiClient(BaseApiClient):
         log.info("Scheduled programs count: %s", len(scheduled_programs))
 
         return scheduled_programs
+
+    # =====================================================
+    # 🔹 ENTRY-LEVEL STATE COUNTS/TITLES
+    # =====================================================
+    #
+    # Entry-level, not episode-level: each top-level "recordings" item is one
+    # recording request (e.g. one "record whole series" selection), which can
+    # contain many episodes. Counting episodes instead of entries inflates
+    # the numbers (confirmed against a real account: 15 entries, one with 38
+    # episodes, would count as 375 episodes).
+    #
+    # An entry counts as "recorded" if it has >=1 recorded episode, and
+    # "scheduled" if it has >=1 scheduled episode - NOT mutually exclusive.
+    # A series partway through its run (some episodes already recorded,
+    # others still upcoming) counts in BOTH - confirmed this matches the real
+    # app's own Recordings/Scheduled Recordings tab counts exactly.
+
+    def _entry_title(self, entry):
+        if entry.get("type") == "Series":
+            return entry.get("series_detail", {}).get("title")
+
+        for episodes in entry.get("program_details", {}).values():
+            if episodes:
+                return episodes[0].get("name")
+
+        return None
+
+    def count_recording_entries(self):
+        """
+        Entry-level counts: {"recorded": N, "scheduled": N, "both": N}.
+        "recorded"/"scheduled" overlap (a mixed-state entry counts in both,
+        matching the real app's own tab counts). "both" reports how many
+        entries counted in both, for transparency.
+        """
+        response = self.get_page_content(content_type="recordings")
+        counts = {"recorded": 0, "scheduled": 0, "both": 0}
+
+        for entry in (response or {}).get("recordings", []):
+            states = {
+                episode.get("item_state")
+                for episodes in entry.get("program_details", {}).values()
+                for episode in episodes
+            }
+
+            has_recorded = "recorded" in states
+            has_scheduled = "scheduled" in states
+
+            if has_recorded:
+                counts["recorded"] += 1
+            if has_scheduled:
+                counts["scheduled"] += 1
+            if has_recorded and has_scheduled:
+                counts["both"] += 1
+
+        return counts
+
+    def get_recording_titles_by_state(self):
+        """
+        Titles version of count_recording_entries(): {"recorded": [...],
+        "scheduled": [...]}, same >=1-episode-in-that-state / overlapping
+        definition, keyed the same way, for comparing against a UI-scraped
+        title list rather than just a count.
+        """
+        response = self.get_page_content(content_type="recordings")
+        titles = {"recorded": [], "scheduled": []}
+
+        for entry in (response or {}).get("recordings", []):
+            title = self._entry_title(entry)
+            if not title:
+                continue
+
+            states = {
+                episode.get("item_state")
+                for episodes in entry.get("program_details", {}).values()
+                for episode in episodes
+            }
+
+            if "recorded" in states:
+                titles["recorded"].append(title)
+            if "scheduled" in states:
+                titles["scheduled"].append(title)
+
+        return titles

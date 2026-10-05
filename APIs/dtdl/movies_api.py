@@ -1,7 +1,7 @@
 import random
-from tests.Test_API_Repo.APIs.dtdl.base_api_client import BaseApiClient
-from tests.Test_API_Repo.Utilities.Queries import APIQuery
-from tests.Test_API_Repo.Utilities.Loggers import Logger
+from Test_API_Repo.APIs.dtdl.base_api_client import BaseApiClient
+from Test_API_Repo.Utilities.Queries import APIQuery
+from Test_API_Repo.Utilities.Loggers import Logger
 
 log = Logger().setup_logger("moviesAPI")
 
@@ -55,7 +55,12 @@ class MoviesApiClient(BaseApiClient):
 
             if content and "components" in content:
                 for component in content["components"]:
-                    if component.get("template_id") == "RAIL":
+                    # Real rail template_ids are e.g. "RAIL_AUTOMATIC"/"RAIL_LIVE",
+                    # never the exact literal "RAIL" - substring check, matching
+                    # home_api.py's convention (an exact match here never matches
+                    # anything real).
+                    template_id = component.get("template_id") or ""
+                    if "RAIL" in template_id and template_id != "HIGHLIGHT":
                         rail_id = component["id"]
                         if rail_id not in seen_rail_ids:
                             all_components.append(component)
@@ -156,9 +161,9 @@ class MoviesApiClient(BaseApiClient):
 
     def _create_movie_object_from_asset_action(
         self, item_data, asset_actions_data, rail_title=None, rail_index=None):
-    """
-    Create a Movie object from item data and asset actions data.
-    """
+        """
+        Create a Movie object from item data and asset actions data.
+        """
 
         actions = asset_actions_data.get("actions", {})
 
@@ -333,9 +338,9 @@ class MoviesApiClient(BaseApiClient):
             position=position_info,
         )
     def _filter_movies_by_description(self, movies_list, movie_desc):
-    """
-    Filter movies based on MovieDesc criteria.
-    """
+        """
+        Filter movies based on MovieDesc criteria.
+        """
 
         filtered_movies = []
 
@@ -807,15 +812,15 @@ class MoviesApiClient(BaseApiClient):
 
     def get_movies_by_rail(self, rail_title=None, rail_index=None, movie_desc=None, content_type="movies"):
 
-    if movie_desc is None:
-        movie_desc = APIQuery.MovieDesc()
+        if movie_desc is None:
+            movie_desc = APIQuery.MovieDesc()
 
-    if rail_title:
-        movie_desc.rail_title = rail_title
-    if rail_index is not None:
-        movie_desc.rail_index = rail_index
+        if rail_title:
+            movie_desc.rail_title = rail_title
+        if rail_index is not None:
+            movie_desc.rail_index = rail_index
 
-    return self.get_movie_details(movie_desc, content_type, True)["movies"]
+        return self.get_movie_details(movie_desc, content_type, True)["movies"]
 
 
     def get_cast_and_crew(self, content_type="movies"):

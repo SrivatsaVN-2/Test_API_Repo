@@ -1,6 +1,6 @@
-from tests.Test_API_Repo.APIs.dtdl.base_api_client import BaseApiClient
-from tests.Test_API_Repo.Utilities.Queries import APIQuery
-from tests.Test_API_Repo.Utilities.Loggers import Logger
+from Test_API_Repo.APIs.dtdl.base_api_client import BaseApiClient
+from Test_API_Repo.Utilities.Queries import APIQuery
+from Test_API_Repo.Utilities.Loggers import Logger
 
 
 log = Logger().setup_logger("API.RentedContent")

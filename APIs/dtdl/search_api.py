@@ -17,7 +17,7 @@ class SearchApiClient(BaseApiClient):
     # 🔹 SEARCH MOVIE
     # =====================================================
 
-    def search_movie(self, movie_title):
+    def search_movie(self, movie_title, size=None):
         """
         Search for a specific movie using the search API
         """
@@ -33,6 +33,10 @@ class SearchApiClient(BaseApiClient):
             ).copy()
 
             params["text_search"] = movie_title
+            if size is not None:
+                # API default is 25 if omitted; 100 is the confirmed max
+                # (size>100 returns 400 Bad Request).
+                params["size"] = str(size)
 
             headers = self.config_manager.get_header(self.language, "OTHER")
 
@@ -164,7 +168,13 @@ class SearchApiClient(BaseApiClient):
     # =====================================================
 
     def get_movies_array(self, search_result):
-        return search_result.get("movies", [])
+        return (search_result or {}).get("movies", [])
+
+    def get_tv_shows_array(self, search_result):
+        return (search_result or {}).get("tv_shows", [])
+
+    def get_persons_array(self, search_result):
+        return (search_result or {}).get("persons", [])
 
     def get_exact_match_movies_array(self, search_result, movie_title):
 

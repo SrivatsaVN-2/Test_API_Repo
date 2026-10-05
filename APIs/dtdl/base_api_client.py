@@ -1,12 +1,27 @@
 # base_api_client.py
 
+import time
+import uuid
+
 import requests
+import yaml
 from pathlib import Path
 
 from Test_API_Repo.APIs.dtdl.config_manager import Config_Manager
+from Test_API_Repo.Utilities.Loggers import Logger
+
+log = Logger().setup_logger("API.BaseApiClient")
+
+# Test_API_Repo/APIs/dtdl/base_api_client.py -> repo root is 3 parents up.
+_CREDENTIALS_PATH = Path(__file__).resolve().parents[3] / "configs" / "credentials.yaml"
 
 
 class BaseApiClient:
+
+    _FRESH_ID_HEADERS = ("device-id", "requestid", "x-request-session-id", "x-request-tracking-id")
+    _LOGIN_MAX_ATTEMPTS = 4
+    _LOGIN_RETRY_BACKOFF_SECONDS = 2
+
     def __init__(self, interface=None, config_manager=None):
 
         if not interface:
@@ -119,9 +134,20 @@ class BaseApiClient:
             requires_adult=requires_adult_token,
         )
 
-        # 3. Merge custom headers if provided
+        # 3. Merge custom headers if provided.
+        # Callers often pass a header dict fetched straight from a static
+        # config.json template (e.g. header_type="BFF_OTHER"), which can
+        # contain a placeholder empty-string "bff_token"/"Authorization"
+        # entry. A plain .update() would let that blank placeholder
+        # overwrite the real auth values _build_headers() just computed
+        # above - so blank/None values from the caller are dropped instead
+        # of applied, while any genuine override the caller supplies still
+        # takes effect.
         if "headers" in kwargs:
-            headers.update(kwargs["headers"])
+            custom_headers = {
+                k: v for k, v in kwargs["headers"].items() if v not in (None, "")
+            }
+            headers.update(custom_headers)
 
         kwargs["headers"] = headers
 
@@ -136,8 +162,27 @@ class BaseApiClient:
             return response.text
 
     # =====================================================
-    # 🔹 TOKEN REFRESH (UNCHANGED)
+    # 🔹 TOKEN REFRESH
     # =====================================================
+    #
+    # NATCO shortcut (HU SDMC / HU SEI / MKT) is unchanged: those skip LOGIN
+    # entirely and use the stored bff_token immediately, exactly as before.
+    #
+    # Every other NATCO (e.g. AT) now gets a resilient dynamic LOGIN: the
+    # LOGIN gateway load-balances across backend instances, at least one of
+    # which has been observed intermittently returning 500/503 (confirmed by
+    # differing Set-Cookie srv_N values and a canary:true response header on
+    # the failing one). Which instance a given request lands on isn't
+    # controlled by the client, so a 5xx is retried a few times on the theory
+    # that a later attempt lands on a healthy instance - regenerating
+    # config.json's static LOGIN identifiers (device-id, requestid,
+    # x-request-session-id, x-request-tracking-id) per attempt, since those
+    # are captured-once values every automated login was otherwise replaying
+    # unchanged. If dynamic LOGIN still fails after retries (or hits an
+    # un-retryable 4xx), the stored bff_token - if one is configured - is
+    # used as a fail-safe instead of erroring out. If dynamic LOGIN succeeds
+    # and the fresh token differs from the stored one, the stored one is
+    # updated automatically (tokens expire ~2 weeks after issue).
 
     def _refresh_access_token(self):
 
@@ -154,14 +199,16 @@ class BaseApiClient:
                 f"Invalid credentials → username={username}, password={password}"
             )
 
-        # NATCO shortcut
+        fallback_bff_token = data.get("bff_token")
+
+        # NATCO shortcut - unchanged.
         if (
-            data.get("bff_token")
+            fallback_bff_token
             and self.stb_config
             and getattr(self.stb_config, "fdn_natco", None)
             in ["HU SDMC", "HU SEI", "MKT"]
         ):
-            self.access_token = data["bff_token"]
+            self.access_token = fallback_bff_token
             return
 
         base_url = self.config_manager.get_endpoint(self.language, "BASE")
@@ -172,12 +219,94 @@ class BaseApiClient:
         else:
             url = f"{base_url.rstrip('/')}/{login_endpoint.lstrip('/')}"
 
-        headers = self.config_manager.get_header(self.language, "LOGIN")
+        last_response = None
+        fresh_token = None
 
-        response = self.session.post(url, headers=headers, json=data)
-        response.raise_for_status()
+        for attempt in range(1, self._LOGIN_MAX_ATTEMPTS + 1):
+            headers = self.config_manager.get_header(self.language, "LOGIN")
 
-        self.access_token = response.json().get("accessToken", "")
+            # Fresh identifiers per attempt - see class docstring above.
+            for header_name in self._FRESH_ID_HEADERS:
+                if header_name in headers:
+                    headers[header_name] = str(uuid.uuid4())
 
-        if not self.access_token:
-            raise ValueError("Access token missing in response")
+            try:
+                response = self.session.post(url, headers=headers, json=data)
+            except requests.exceptions.RequestException as e:
+                log.warning(f"LOGIN attempt {attempt}/{self._LOGIN_MAX_ATTEMPTS} raised {e!r}")
+                last_response = None
+                if attempt < self._LOGIN_MAX_ATTEMPTS:
+                    time.sleep(self._LOGIN_RETRY_BACKOFF_SECONDS)
+                continue
+
+            if response.status_code < 500:
+                # 2xx, or an un-retryable 4xx (bad credentials, 401, 403,
+                # etc.) - retrying with the same data won't help, so stop
+                # trying the dynamic path here either way.
+                last_response = response
+                if response.status_code < 300:
+                    fresh_token = response.json().get("accessToken", "")
+                break
+
+            last_response = response
+            remaining = self._LOGIN_MAX_ATTEMPTS - attempt
+            log.warning(
+                f"LOGIN attempt {attempt}/{self._LOGIN_MAX_ATTEMPTS} got "
+                f"{response.status_code} {response.reason} ({remaining} retr{'y' if remaining == 1 else 'ies'} left)"
+            )
+            if remaining:
+                time.sleep(self._LOGIN_RETRY_BACKOFF_SECONDS)
+
+        if fresh_token:
+            self.access_token = fresh_token
+            log.info("Dynamically generated a fresh access token via LOGIN.")
+            if fallback_bff_token and fallback_bff_token != fresh_token:
+                self._persist_bff_token_if_changed(fresh_token)
+            return
+
+        # Dynamic LOGIN failed - fall back to the stored bff_token (the
+        # "instead of erroring, read the hardcoded bff_token" fail-safe).
+        if fallback_bff_token:
+            status_desc = f"{last_response.status_code} {last_response.reason}" if last_response is not None else "no response"
+            log.warning(
+                f"Dynamic LOGIN failed ({status_desc}) - falling back to the "
+                f"stored bff_token from credentials.yaml."
+            )
+            self.access_token = fallback_bff_token
+            return
+
+        # No fallback available either - fail loudly with whatever detail we have.
+        if last_response is not None:
+            last_response.raise_for_status()
+        raise ValueError("LOGIN failed (no response from server) and no fallback bff_token is configured.")
+
+    def _persist_bff_token_if_changed(self, new_token):
+        """
+        Updates credentials.yaml's bff_token for the current NATCO if it
+        differs from what's stored, so the next run picks up the fresh token
+        without needing another dynamic LOGIN. Best-effort: a failure here
+        (e.g. file locked) is logged, not raised - self.access_token is
+        already set from the live LOGIN response regardless.
+        """
+        natco_key = self.language.lower()
+        try:
+            with open(_CREDENTIALS_PATH, "r", encoding="utf-8") as f:
+                doc = yaml.safe_load(f)
+
+            natco_creds = doc.get("credentials", {}).get(natco_key)
+            if natco_creds is None:
+                log.warning(f"No '{natco_key}' entry in credentials.yaml - skipping bff_token persist.")
+                return
+
+            if natco_creds.get("bff_token") == new_token:
+                return  # unchanged, nothing to write
+
+            natco_creds["bff_token"] = new_token
+
+            with open(_CREDENTIALS_PATH, "w", encoding="utf-8") as f:
+                yaml.safe_dump(doc, f, default_flow_style=False, sort_keys=False, allow_unicode=True)
+
+            log.info(f"credentials.yaml's bff_token for '{natco_key}' updated with the freshly generated token.")
+
+        except Exception as e:
+            log.warning(f"Could not persist updated bff_token to credentials.yaml: {e!r}")

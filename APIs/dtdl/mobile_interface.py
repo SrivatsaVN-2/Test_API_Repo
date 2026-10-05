@@ -1,8 +1,13 @@
 # mobile_interface.py
 #
-# Mobile-touchpoint equivalent of Interface.py. Kept as its own file so
-# nothing here touches Interface.py / base_api_client.py / config_manager.py
-# (the STB implementations).
+# Mobile-touchpoint equivalent of Interface.py. The only piece that's
+# genuinely touchpoint-specific: how natco/language/credentials get resolved
+# (STB reads STBConfig/pytest-stb options; mobile reads the --natco CLI
+# option plus Configs/credentials.yaml). Once built, this plugs directly
+# into the same shared BaseApiClient/Config_Manager and shared domain classes
+# (HomeApiClient, ChannelApiClient, RecordingApiClient, etc. in home_api.py,
+# channel_api.py, recording_api.py, ...) that STB uses - there's no separate
+# mobile_*_api.py layer any more.
 #
 # Source mapping (STB -> Mobile):
 #   STBConfig.fdn_natco        -> the `natco` pytest fixture (--natco)
@@ -15,11 +20,11 @@
 #                                  and the `password` arg passed in is always "").
 #                                  credentials.yaml's separate "password" field is
 #                                  kept for reference but not used in this LOGIN flow.
-#   ...[4]["bff_token"]        -> credentials.yaml's "bff_token" field (optional). If
-#                                  set, MobileBaseApiClient._refresh_access_token() uses
-#                                  it directly as the access_token, skipping the LOGIN
-#                                  POST entirely - for any natco, not just STB's
-#                                  HU SDMC/HU SEI/MKT list (see mobile_base_api_client.py).
+#   ...[4]["bff_token"]        -> credentials.yaml's "bff_token" field (optional). Used
+#                                  by BaseApiClient._refresh_access_token() as the
+#                                  fail-safe if dynamic LOGIN fails - for any natco, not
+#                                  just STB's HU SDMC/HU SEI/MKT shortcut list (see
+#                                  base_api_client.py).
 #   ...[4]["x-adult-token"] -> no mobile equivalent yet; left empty.
 
 from helpers import device_manager
@@ -85,9 +90,9 @@ def build_mobile_interface(natco, os_type, username, passcode, bff_token=""):
     username, passcode: from Configs/credentials.yaml for this natco -
         passcode is what actually reaches telekomLogin.password (see the
         module docstring).
-    bff_token: optional, from Configs/credentials.yaml. If supplied, the
-        LOGIN POST is skipped entirely and this is used directly as the
-        access token (see mobile_base_api_client.py).
+    bff_token: optional, from Configs/credentials.yaml. Used as the fail-safe
+        access token if dynamic LOGIN fails (see base_api_client.py's
+        _refresh_access_token()), and auto-refreshed there on success.
     """
     device_info = device_manager.get_device_info(os_type)
     device_id = device_info.get("device_id") or "Unknown"

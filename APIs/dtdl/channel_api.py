@@ -4,9 +4,9 @@ import random
 import string
 from typing import Dict, List, Optional, Union
 
-from tests.Test_API_Repo.APIs.dtdl.base_api_client import BaseApiClient
-from tests.Test_API_Repo.Utilities.Queries import APIQuery
-from tests.Test_API_Repo.Utilities.Loggers import Logger
+from Test_API_Repo.APIs.dtdl.base_api_client import BaseApiClient
+from Test_API_Repo.Utilities.Queries import APIQuery
+from Test_API_Repo.Utilities.Loggers import Logger
 
 log = Logger().setup_logger("Channel.API")
 
@@ -45,7 +45,7 @@ class ChannelApiClient(BaseApiClient):
 
     def _init_cms_client(self):
         try:
-            from tests.Test_API_Repo.APIs.cmsdata.cms_data import CMSApiClient
+            from Test_API_Repo.APIs.cmsdata.cms_data import CMSApiClient
             return CMSApiClient(interface=self.interface)
         except Exception:
             log.warning("CMS client not available")
@@ -230,6 +230,29 @@ class ChannelApiClient(BaseApiClient):
         data = self._fetch_api_data("FAVORITES")
 
         return self._filter_channel_data(data, desc, "FAVORITES")
+
+    def get_unsubscribed_channels(self, desc=None):
+        """
+        Channels present in the full channel list but absent from the
+        subscribed list (matched by station_id). CHANNEL_INFO does not carry
+        a working per-channel "is_subscribed" flag, so subscription status
+        has to be computed by diffing it against SUBSCRIPTION_URL.
+
+        The diff itself always compares full (unsized) lists - self.channel_desc
+        defaults to size=1, which would make the diff meaningless if used
+        directly here. `desc`, if given, is applied as a final filter/size
+        limit on the diffed result instead (same convention as
+        get_first_channel_number()'s size=1000 "effectively unlimited" fetch).
+        """
+        full_desc = APIQuery.ChannelDesc(size=1000)
+        all_channels = self.get_channels(full_desc)
+        subscribed = self.get_subscribed_channels(full_desc)
+
+        subscribed_ids = {ch.station_id for ch in subscribed}
+        unsubscribed = [ch for ch in all_channels if ch.station_id not in subscribed_ids]
+
+        desc = desc or self.channel_desc
+        return unsubscribed[: desc.size or len(unsubscribed)]
 
     # =====================================================
     # 🔹 UTILITIES
