@@ -232,8 +232,9 @@ class BaseApiClient:
 
             try:
                 response = self.session.post(url, headers=headers, json=data)
-            except requests.exceptions.RequestException as e:
-                log.warning(f"LOGIN attempt {attempt}/{self._LOGIN_MAX_ATTEMPTS} raised {e!r}")
+            except requests.exceptions.RequestException:
+                # Per-attempt detail is suppressed - only the single summary
+                # line below (on final fallback) is shown.
                 last_response = None
                 if attempt < self._LOGIN_MAX_ATTEMPTS:
                     time.sleep(self._LOGIN_RETRY_BACKOFF_SECONDS)
@@ -250,10 +251,8 @@ class BaseApiClient:
 
             last_response = response
             remaining = self._LOGIN_MAX_ATTEMPTS - attempt
-            log.warning(
-                f"LOGIN attempt {attempt}/{self._LOGIN_MAX_ATTEMPTS} got "
-                f"{response.status_code} {response.reason} ({remaining} retr{'y' if remaining == 1 else 'ies'} left)"
-            )
+            # Per-attempt detail is suppressed - only the single summary line
+            # below (on final fallback) is shown.
             if remaining:
                 time.sleep(self._LOGIN_RETRY_BACKOFF_SECONDS)
 
@@ -267,11 +266,8 @@ class BaseApiClient:
         # Dynamic LOGIN failed - fall back to the stored bff_token (the
         # "instead of erroring, read the hardcoded bff_token" fail-safe).
         if fallback_bff_token:
-            status_desc = f"{last_response.status_code} {last_response.reason}" if last_response is not None else "no response"
-            log.warning(
-                f"Dynamic LOGIN failed ({status_desc}) - falling back to the "
-                f"stored bff_token from credentials.yaml."
-            )
+            status_desc = str(last_response.status_code) if last_response is not None else "no response"
+            log.error(f"Error {status_desc} while logging in - falling back to hardcoded BFF token.")
             self.access_token = fallback_bff_token
             return
 
